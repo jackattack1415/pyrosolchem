@@ -5,8 +5,27 @@ import numpy as np
 from scipy.constants import pi, R, N_A
 
 
-def calculate_moles_from_radius(components, initial_conditions, constants, x_h2o=None):
-    """ Calculate volume from the molar composition of a list of components in solution.
+def calculate_volume_from_radius(radius):
+    """ Calculate volume from radius.
+
+    Parameters
+    ----------
+    radius : float
+    radius of droplet in m^3.
+
+    Returns
+    -------
+    volume : float
+    volume of droplet in m^3.
+    """
+
+    volume = 4. / 3. * pi * radius ** 3
+
+    return volume
+
+
+def calculate_moles_from_volume(compounds, composition, v_total, x_h2o=None):
+    """ Calculate volume from the molar composition of a list of compounds in solution.
 
     Parameters
     ----------
@@ -17,8 +36,8 @@ def calculate_moles_from_radius(components, initial_conditions, constants, x_h2o
     2D numpy array of molar amounts of material. First index is entry number
     (e.g., each timestep), second index is index of component in `components`.
 
-    xh2o : float (optional, default None)
-    Fixed mole fraction of water added to particle in calculating value.
+    x_h2o : float (optional, default None)
+    Mole fraction of water added to particle in calculating value.
 
     Returns
     -------
@@ -27,7 +46,30 @@ def calculate_moles_from_radius(components, initial_conditions, constants, x_h2o
     addition of water, in m^3.
     """
 
-    v_total = np.zeros_like(n_components.shape[0])
+    if x_h2o:
+        composition.append(x_h2o * composition.sum)
+        compounds.append(water)
+
+    rho_avg = np.average([compound['rho'] for compound in compounds],
+                         weights=composition)  # kg m^-3
+
+    m_total = v_total * rho_avg
+
+    mw_avg = np.average([compound['M'] for compound in compounds],
+                        weights=composition)  # kg mole^-1
+
+    n_total = m_total / mw_avg  # mole
+
+    composition_normalized = composition / composition.sum()
+    n_compound = composition_normalized * n_total
+
+    return n_compound
+
+
+
+
+
+    moles = np.zeros_like(len(components))
     for moles, component in enumerate(components):
         # convert number of molecules in ns, using molecular/molar mass Ma/M
         # (units kg (molec or mol)^-1) and density rho (kg m^-3), to volume in
