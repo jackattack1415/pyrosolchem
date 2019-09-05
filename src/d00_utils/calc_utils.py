@@ -5,7 +5,7 @@ import numpy as np
 from scipy.constants import pi, R, N_A
 
 
-def moles_to_volume(components, n_components, x_h2o=None):
+def calculate_moles_from_radius(components, initial_conditions, constants, x_h2o=None):
     """ Calculate volume from the molar composition of a list of components in solution.
 
     Parameters
@@ -41,7 +41,43 @@ def moles_to_volume(components, n_components, x_h2o=None):
     return v_total
 
 
-def moles_to_radius(components, ns, has_water=False, xh2o=None):
+def calculate_volume_from_moles(components, n_components, constants, x_h2o=None):
+    """ Calculate volume from the molar composition of a list of components in solution.
+
+    Parameters
+    ----------
+    components : list
+    List of dicts for each component.
+
+    ns : numpy.array
+    2D numpy array of molar amounts of material. First index is entry number
+    (e.g., each timestep), second index is index of component in `components`.
+
+    xh2o : float (optional, default None)
+    Fixed mole fraction of water added to particle in calculating value.
+
+    Returns
+    -------
+    vtot : numpy.array
+    1D array of total volumes calculated for each row in `ns`, with possible
+    addition of water, in m^3.
+    """
+
+    v_total = np.zeros_like(n_components.shape[0])
+    for moles, component in enumerate(components):
+        # convert number of molecules in ns, using molecular/molar mass Ma/M
+        # (units kg (molec or mol)^-1) and density rho (kg m^-3), to volume in
+        # m^3
+        v_component = n_components[:, moles] * component['M'] / component['rho'] / N_A
+        v_total = v_total + v_component
+    if x_h2o:
+        n_h2o = x_h2o / (1 - x_h2o) * n_components.sum(axis=1)
+        v_h2o = n_h2o * MA_H2O / RHO_H2O
+        v_total = v_total + v_h2o
+    return v_total
+
+
+def moles_to_radius(components, n_components, x_h2o=None):
     '''Given array of n values in time and list of components, calculate radii.
 
     Parameters
