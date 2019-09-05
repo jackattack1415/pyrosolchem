@@ -1,0 +1,2 @@
+MA_H2O = 0.018 / 6.02e23  # mass water, kg molec^-1
+RHO_H2O = 1.000e3  # density water, kg m^-3
