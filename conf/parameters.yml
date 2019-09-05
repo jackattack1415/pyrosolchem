@@ -1,0 +1,2 @@
+radius: 5e-5 # m
+x_h2o: # for the time being, we assume fixed
