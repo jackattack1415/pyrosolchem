@@ -37,7 +37,6 @@ def calculate_volume_from_radius(r):
     volume of droplet in m^3.
     """
 
-    r = float(r)
     V = 4. / 3. * pi * r ** 3
 
     return V
@@ -67,12 +66,11 @@ def calculate_moles_from_volume(compounds, composition, V_total):
 
     Parameters
     ----------
-    compounds : list
-    List of dicts for each component.
+    compounds : dict
+    Dict of dicts for each compound.
 
     composition : numpy.array
-    2D numpy array of molar amounts of material. First index is entry number
-    (e.g., each timestep), second index is index of component in `components`.
+    numpy array of molar amounts of material, where the index corresponds to the compound in compounds.
 
     V_total : float
     Volume of solution in m^3.
@@ -83,10 +81,10 @@ def calculate_moles_from_volume(compounds, composition, V_total):
     1D array of moles of compounds according to composition and droplet size.
     """
 
-    mw_avg = np.average([compound['mw'] for compound in compounds],
+    mw_avg = np.average([defs['mw'] for name, defs in compounds.items()],
                         weights=composition)  # kg mole^-1
 
-    rho_avg = np.average([compound['rho'] for compound in compounds],
+    rho_avg = np.average([defs['rho'] for name, defs in compounds.items()],
                          weights=composition)  # kg m^-3
 
     m_total = V_total * rho_avg  # kg
@@ -98,8 +96,8 @@ def calculate_moles_from_volume(compounds, composition, V_total):
 
 def calculate_partial_volumes_from_moles(compounds, ns):
 
-    mws = np.array([compound['mw'] for compound in compounds])
-    rhos = np.array([compound['rho'] for compound in compounds])
+    mws = np.array([defs['mw'] for name, defs in compounds.items()])
+    rhos = np.array([defs['rho'] for name, defs in compounds.items()])
 
     Vs = ns * mws / rhos  # array of partial volumes, m^3
 
