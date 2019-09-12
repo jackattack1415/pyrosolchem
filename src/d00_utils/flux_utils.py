@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.constants import pi
 
-from src.d00_utils.calc_utils import (calculate_partial_volumes_from_moles, calculate_radius_from_volume, \
-    calculate_mole_fractions_from_molar_abundances)
+from src.d00_utils.calc_utils import (calculate_volume_from_moles, calculate_radius_from_volume,
+                                      calculate_mole_fractions_from_molar_abundances)
 
 
 def dn_gas_particle_partitioning(ns_cmpd, c_infs, vps, D_gs, T, compounds, water, x_water=0):
@@ -39,12 +39,11 @@ def dn_gas_particle_partitioning(ns_cmpd, c_infs, vps, D_gs, T, compounds, water
     ns = np.append(ns_cmpd, n_water)
     cmpds = {**compounds, **{'water': water}}
 
-    Vs = calculate_partial_volumes_from_moles(compounds=cmpds,
-                                              ns=ns)
-    V = Vs.sum()
-    r = calculate_radius_from_volume(V)
+    V = calculate_volume_from_moles(compounds=cmpds,
+                                    ns=ns)
+    r = calculate_radius_from_volume(V=V)
 
-    xs = calculate_mole_fractions_from_molar_abundances(ns=ns_cmpd,
+    xs = calculate_mole_fractions_from_molar_abundances(composition=ns_cmpd,
                                                         x_water=x_water)
     c_sats = xs * vps / T  # assume ideal mixing to calculate saturation concentration at surface
 

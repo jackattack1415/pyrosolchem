@@ -115,14 +115,17 @@ def calculate_moles_from_volume(V_total, compounds, water, xs_cmpd, x_water=0):
     return ns_cmpd
 
 
-def calculate_partial_volumes_from_moles(compounds, ns):
+def calculate_volume_from_moles(compounds, ns):
+    mw_avg = np.average([defs['mw'] for name, defs in compounds.items()],
+                        weights=ns)
 
-    mws = np.array([defs['mw'] for name, defs in compounds.items()])
-    rhos = np.array([defs['rho'] for name, defs in compounds.items()])
+    rho_avg = np.average([defs['rho'] for name, defs in compounds.items()],
+                         weights=ns)
 
-    Vs = ns * mws / rhos
+    n_total = ns.sum()
+    V = n_total * mw_avg / rho_avg
 
-    return Vs
+    return V
 
 
 def calculate_vp_from_reference(vp_ref, dH, T_ref, T_desired):
