@@ -98,6 +98,7 @@ def calculate_moles_from_volume(V_total, compounds, water, xs_cmpd, x_water=0):
     1D array of moles of compounds according to composition and droplet size.
     """
 
+    # add water to the compounds for the purposes of averaging within the droplet
     xs = np.append(xs_cmpd, x_water)
     cmpds = {**compounds, **{'water': water}}
 
@@ -119,7 +120,7 @@ def calculate_partial_volumes_from_moles(compounds, ns):
     mws = np.array([defs['mw'] for name, defs in compounds.items()])
     rhos = np.array([defs['rho'] for name, defs in compounds.items()])
 
-    Vs = ns * mws / rhos  # array of partial volumes, m^3
+    Vs = ns * mws / rhos
 
     return Vs
 
