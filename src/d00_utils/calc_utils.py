@@ -37,6 +37,7 @@ def calculate_volume_from_radius(r):
     volume of droplet in m^3.
     """
 
+    r = float(r)
     V = 4. / 3. * pi * r ** 3
 
     return V
