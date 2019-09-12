@@ -1,8 +1,8 @@
 ipython>=7.0.0, <8.0
 jupyter>=1.0.0, <2.0
-os
-pyyaml
+ruamel.yaml
 numpy
 pandas==0.24.2
 numpy
 matplotlib
+scipy
