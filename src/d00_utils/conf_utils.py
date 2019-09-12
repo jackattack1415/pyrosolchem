@@ -13,7 +13,7 @@ def get_project_directory():
     return project_directory
 
 
-def load_components():
+def load_compounds():
     """ Returns components as a dictionary.
         Outputs
         ---
@@ -21,14 +21,14 @@ def load_components():
     """
 
     project_directory = get_project_directory()
-    filepath = os.sep.join(project_directory + 'conf/components.yml'.split('/'))
+    filepath = os.sep.join(project_directory + 'conf/compounds.yml'.split('/'))
     with open(filepath) as f:
-        components = yaml.safe_load(f)
+        compounds = yaml.safe_load(f)
 
-    return components
+    return compounds
 
 
-def load_constants():
+def load_parameters():
     """ Returns constants.
         Outputs
         ---
@@ -36,8 +36,8 @@ def load_constants():
     """
 
     project_directory = get_project_directory()
-    filepath = os.sep.join(project_directory + 'conf/constants.yml'.split('/'))
+    filepath = os.sep.join(project_directory + 'conf/parameters.yml'.split('/'))
     with open(filepath) as f:
-        constants = yaml.safe_load(f)
+        initial_conditions = yaml.safe_load(f)
 
-    return constants
+    return initial_conditions

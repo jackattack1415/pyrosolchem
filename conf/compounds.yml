@@ -1,0 +1,40 @@
+## EXAMPLE ##
+#molecular_name:
+#  "name": (str) abbreviated name of compound
+#  "D_g": (float) gas-phase diffusivity, m^2 s^-1
+#  "mw": (float) molecular weight, kg mol^-1
+#  "rho": (float) density, kg m^-3
+#  "c_inf": (float) background concentration, mol m^-3
+#  "vp": (float) saturation vapor pressure, Pa
+#  "T_vp": (float) temperature of saturation vapor pressure recording, K
+#  "dH": (float) heat of vaporization, J mol^-1
+
+triethylene_glycol:
+  "name": 'PEG-3'
+  "D_g": 5.95e-6
+  "mw": 0.1502
+  "rho": 1108.0
+  "c_inf": 0
+  "vp": 6.68e-2
+  "T_vp": 298
+  "dH": 78.3e+3
+
+hexaethylene_glycol:
+  "name": "PEG-6"
+  "D_g": 4.26e-6
+  "mw": 0.2823
+  "rho": 1180.0
+  "c_inf": 0
+  "vp": 3.05e-5
+  "T_vp": 298
+  "dH": 102.1e+3
+
+# if an aqueous solution, water must be included LAST in the list of compounds.
+water:
+  "name": 'h2o'
+  "D_g": 2.08e-5 # at T = 20 deg C
+  "mw": 0.018
+  "rho": 0.997
+  "vp": 31711
+  "T_vp": 298
+  "dH": 40.65e+3
