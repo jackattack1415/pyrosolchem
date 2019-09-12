@@ -1,6 +1,7 @@
 import os
 import yaml
 
+
 def get_project_directory():
     """ Returns project directory.
         Outputs
@@ -8,7 +9,7 @@ def get_project_directory():
         project_directory (str): path back to top level directory
     """
 
-    project_directory = os.path.dirname(os.path.realpath(__file__))
+    project_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
 
     return project_directory
 
@@ -21,7 +22,7 @@ def load_compounds():
     """
 
     project_directory = get_project_directory()
-    filepath = os.sep.join(project_directory + 'conf/compounds.yml'.split('/'))
+    filepath = os.path.join(project_directory, 'conf', 'compounds.yml')
     with open(filepath) as f:
         compounds = yaml.safe_load(f)
 
@@ -36,7 +37,7 @@ def load_parameters():
     """
 
     project_directory = get_project_directory()
-    filepath = os.sep.join(project_directory + 'conf/parameters.yml'.split('/'))
+    filepath = os.path.join(project_directory, 'conf', 'parameters.yml')
     with open(filepath) as f:
         initial_conditions = yaml.safe_load(f)
 
