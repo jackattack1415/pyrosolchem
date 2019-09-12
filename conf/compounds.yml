@@ -9,7 +9,7 @@
 #  "T_vp": (float) temperature of saturation vapor pressure recording, K
 #  "dH": (float) heat of vaporization, J mol^-1
 
-triethylene_glycol:
+"triethylene_glycol":
   "name": 'PEG-3'
   "D_g": 5.95e-6
   "mw": 0.1502
@@ -19,7 +19,7 @@ triethylene_glycol:
   "T_vp": 298
   "dH": 78.3e+3
 
-hexaethylene_glycol:
+"hexaethylene_glycol":
   "name": "PEG-6"
   "D_g": 4.26e-6
   "mw": 0.2823
@@ -30,7 +30,7 @@ hexaethylene_glycol:
   "dH": 102.1e+3
 
 # if an aqueous solution, water must be included LAST in the list of compounds.
-water:
+"water":
   "name": 'h2o'
   "D_g": 2.08e-5 # at T = 20 deg C
   "mw": 0.018
