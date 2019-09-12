@@ -29,7 +29,6 @@
   "T_vp": 298
   "dH": 102.1e+3
 
-# if an aqueous solution, water must be included LAST in the list of compounds.
 "water":
   "name": 'h2o'
   "D_g": 2.08e-5 # at T = 20 deg C

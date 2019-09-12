@@ -26,7 +26,10 @@ def load_compounds():
     with open(filepath) as f:
         compounds = yaml.safe_load(f)
 
-    return compounds
+    water = compounds['water']
+    del compounds['water']
+
+    return compounds, water
 
 
 def load_parameters():

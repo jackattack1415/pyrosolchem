@@ -1,6 +1,6 @@
 "r_init": 5e-5 # m
 "X_h2o": 0.7 # for the time being, we assume fixed
 
-composition:
+composition:  # place in same order as compounds for time being
   "triethylene_glycol": 0.1
   "hexaethylene_glycol": 0.1

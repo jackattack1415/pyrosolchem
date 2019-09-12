@@ -4,23 +4,34 @@ from __future__ import division
 import numpy as np
 from scipy.constants import pi, R
 
+from src.d00_utils.misc_utils import normalize
 
-def add_water_to_droplet_composition(composition, X_h2o=None):
-    """ Updates dry droplet dict with water with X_h2o (typically specified in "compounds.yml").
+
+def calculate_mole_fractions_from_molar_abundances(composition, x_water=0):
+    """ Calculates mole fractions of compounds in composition knowing the water mole fraction.
 
     Parameters
     ----------
-    composition : dict(float)
-    dict of floats representing the molar composition of (dry) droplet
+    composition : dict
 
-    X_h2o : float or None
-    mole fraction of water in the droplet.
+    x_water : float
+    water mole fraction.
+
+    Returns
+    -------
+    xs_cmpd : array
+    array of mole fractions for compounds in composition.
+
 
     """
 
-    dry_composition_moles = list(composition.values())
-    water_content = X_h2o * np.sum(dry_composition_moles)
-    composition.update([('water', water_content)])
+    if type(composition) is dict:
+        composition = np.array(list(composition.values()))
+
+    composition = normalize(composition)
+    xs_cmpd = composition * (1 - x_water)
+
+    return xs_cmpd
 
 
 def calculate_volume_from_radius(r):
@@ -61,37 +72,46 @@ def calculate_radius_from_volume(V):
     return r
 
 
-def calculate_moles_from_volume(compounds, composition, V_total):
-    """ Calculate volume from the relative molar composition of a list of compounds in solution.
+def calculate_moles_from_volume(V_total, compounds, water, xs_cmpd, x_water=0):
+    """ Calculate volume from the mole fractions of a list of compounds in solution.
 
     Parameters
     ----------
-    compounds : dict
-    Dict of dicts for each compound.
-
-    composition : numpy.array
-    numpy array of molar amounts of material, where the index corresponds to the compound in compounds.
-
     V_total : float
     Volume of solution in m^3.
 
+    compounds : dict(dict)
+    Dict of dicts for each component.
+
+    water : dict
+    Dict of values describing water.
+
+    xs_cmpd : numpy.array
+    array of mole fractions of compounds in solution.
+
+    x_water : float
+    mole fraction of water in solution.
+
     Returns
     -------
-    ns_compound : numpy.array
+    ns_cmpd : numpy.array
     1D array of moles of compounds according to composition and droplet size.
     """
 
-    mw_avg = np.average([defs['mw'] for name, defs in compounds.items()],
-                        weights=composition)  # kg mole^-1
+    xs = np.append(xs_cmpd, x_water)
+    cmpds = {**compounds, **{'water': water}}
 
-    rho_avg = np.average([defs['rho'] for name, defs in compounds.items()],
-                         weights=composition)  # kg m^-3
+    mw_avg = np.average([defs['mw'] for name, defs in cmpds.items()],
+                        weights=xs)
 
-    m_total = V_total * rho_avg  # kg
-    n_total = m_total / mw_avg  # mole
-    ns = composition * n_total
+    rho_avg = np.average([defs['rho'] for name, defs in cmpds.items()],
+                         weights=xs)
 
-    return ns
+    m_total = V_total * rho_avg
+    n_total = m_total / mw_avg
+    ns_cmpd = xs_cmpd * n_total
+
+    return ns_cmpd
 
 
 def calculate_partial_volumes_from_moles(compounds, ns):
