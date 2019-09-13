@@ -22,6 +22,4 @@ def normalize(unnormalized_array):
 
 def unpack_dictionary(dictionary):
     for key, value in dictionary.items():
-        exec(key + '=val')
-
-    return
+        exec(key + '=value')
