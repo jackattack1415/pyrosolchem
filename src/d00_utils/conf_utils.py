@@ -1,5 +1,5 @@
 import os
-import yaml
+import ruamel.yaml
 
 
 def get_project_directory():
@@ -24,7 +24,7 @@ def load_compounds():
     project_directory = get_project_directory()
     filepath = os.path.join(project_directory, 'conf', 'compounds.yml')
     with open(filepath) as f:
-        compounds = yaml.safe_load(f)
+        compounds = ruamel.yaml.safe_load(f)
 
     water = compounds['water']
     del compounds['water']
@@ -42,6 +42,6 @@ def load_parameters():
     project_directory = get_project_directory()
     filepath = os.path.join(project_directory, 'conf', 'parameters.yml')
     with open(filepath) as f:
-        initial_conditions = yaml.safe_load(f)
+        initial_conditions = ruamel.yaml.safe_load(f)
 
     return initial_conditions
