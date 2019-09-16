@@ -72,7 +72,7 @@ def convert_volume_to_radius(V):
     return r
 
 
-def convert_volume_to_moles(V, compounds, water, xs_cmpd, x_water=0):
+def convert_volume_to_moles(V, compounds, water, x_cmpds, x_water=0):
     """ Calculate volume from the mole fractions of a list of compounds in solution.
 
     Parameters
@@ -86,7 +86,7 @@ def convert_volume_to_moles(V, compounds, water, xs_cmpd, x_water=0):
     water : dict
     Dict of values describing water.
 
-    xs_cmpd : numpy.array
+    x_cmpds : numpy.array
     array of mole fractions of compounds in solution.
 
     x_water : float
@@ -94,12 +94,12 @@ def convert_volume_to_moles(V, compounds, water, xs_cmpd, x_water=0):
 
     Returns
     -------
-    ns_cmpd : numpy.array
-    1D array of moles of compounds according to composition and droplet size.
+    n_cmpds : numpy.array
+    array of moles of compounds according to composition and droplet size.
     """
 
     # add water to the compounds for the purposes of averaging within the droplet
-    xs = np.append(xs_cmpd, x_water)
+    xs = np.append(x_cmpds, x_water)
     cmpds = {**compounds, **{'water': water}}
 
     mw_avg = np.average([defs['mw'] for name, defs in cmpds.items()],
@@ -110,9 +110,9 @@ def convert_volume_to_moles(V, compounds, water, xs_cmpd, x_water=0):
 
     m_total = V * rho_avg
     n_total = m_total / mw_avg
-    ns_cmpd = xs_cmpd * n_total
+    n_cmpds = x_cmpds * n_total
 
-    return ns_cmpd
+    return n_cmpds
 
 
 def convert_moles_to_volume(compounds, ns):
@@ -130,6 +130,7 @@ def convert_moles_to_volume(compounds, ns):
 
 def calculate_vp_from_reference(vp_ref, dH, T_ref, T_desired):
     '''Convert p0 and delta enthalpy to vapor pressure temp dependence params.
+
     Parameters
     ----------
     p0 : float or ndarray
@@ -153,3 +154,24 @@ def calculate_vp_from_reference(vp_ref, dH, T_ref, T_desired):
     vp_desired = pow(10, log_vp_desired)
 
     return vp_desired
+
+
+def convert_water_mole_fraction_to_moles(n_cmpds, x_water=0):
+    """ calculates moles of water from mole fraction of water and compounds in solution.
+
+    Parameters
+    ----------
+    n_cmpds : nd.array
+    array of moles of compounds according to composition and droplet size.
+    x_water : float
+    water mole fraction.
+
+    Returns
+    -------
+    n_water : nd.array
+    array of moles offf water
+    """
+
+    n_water = np.sum(n_cmpds, axis=1) * (x_water / (1 - x_water))
+
+    return n_water
