@@ -7,7 +7,7 @@ from scipy.constants import pi, R
 from src.d00_utils.misc_utils import normalize
 
 
-def calculate_mole_fractions_from_molar_abundances(composition, x_water=0):
+def convert_molar_abundances_to_mole_fractions(composition, x_water=0):
     """ Calculates mole fractions of compounds in composition knowing the water mole fraction.
 
     Parameters
@@ -34,7 +34,7 @@ def calculate_mole_fractions_from_molar_abundances(composition, x_water=0):
     return xs_cmpd
 
 
-def calculate_volume_from_radius(r):
+def convert_radius_to_volume(r):
     """ Calculate volume from radius.
 
     Parameters
@@ -53,7 +53,7 @@ def calculate_volume_from_radius(r):
     return V
 
 
-def calculate_radius_from_volume(V):
+def convert_volume_to_radius(V):
     """ Calculate radius from volume.
 
     Parameters
@@ -72,12 +72,12 @@ def calculate_radius_from_volume(V):
     return r
 
 
-def calculate_moles_from_volume(V_total, compounds, water, xs_cmpd, x_water=0):
+def convert_volume_to_moles(V, compounds, water, xs_cmpd, x_water=0):
     """ Calculate volume from the mole fractions of a list of compounds in solution.
 
     Parameters
     ----------
-    V_total : float
+    V : float
     Volume of solution in m^3.
 
     compounds : dict(dict)
@@ -108,14 +108,14 @@ def calculate_moles_from_volume(V_total, compounds, water, xs_cmpd, x_water=0):
     rho_avg = np.average([defs['rho'] for name, defs in cmpds.items()],
                          weights=xs)
 
-    m_total = V_total * rho_avg
+    m_total = V * rho_avg
     n_total = m_total / mw_avg
     ns_cmpd = xs_cmpd * n_total
 
     return ns_cmpd
 
 
-def calculate_volume_from_moles(compounds, ns):
+def convert_moles_to_volume(compounds, ns):
     mw_avg = np.average([defs['mw'] for name, defs in compounds.items()],
                         weights=ns)
 
