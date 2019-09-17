@@ -49,7 +49,7 @@ def evaporate(compounds, water, params):
         rs[tick] = convert_volume_to_radius(V=V)
 
     ts = np.linspace(0, params['step_size']*params['number_of_steps'], params['number_of_steps']+1,
-                     endpoint=True)
+                     endpoint=False)
 
     return ns_dry, rs, ts
 
