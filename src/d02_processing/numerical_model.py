@@ -2,10 +2,18 @@ import numpy as np
 from scipy.integrate import ode
 
 
-def differentiate(function, function_params_dict, n_inits, step_count, step=1):
-    """"""
+def differentiate(function, function_params_dict, n_inits, N_steps, step=1):
+    """ Returns n(t) at time step t using scipy's ODE package.
 
-    output = np.empty((int(step_count), len(n_inits)))
+    :param function: (function) the dn/dt function to be integrated
+    :param function_params_dict: (dict) dictionary of parameters that are inputs to above function.
+    :param n_inits: (list(floats) list of initial ns by compound, i.e., n(0).
+    :param N_steps: (float or int) number of steps on which to perform ode.
+    :param step: (float or int) size of step, in seconds.
+    :return: output: (ndarray) 2d array of ns by compound and by time step.
+    """
+
+    output = np.empty((int(N_steps), len(n_inits)))
     output[0, :] = n_inits
 
     r = ode(function)
@@ -14,7 +22,7 @@ def differentiate(function, function_params_dict, n_inits, step_count, step=1):
     r.set_f_params(function_params_dict)
 
     entry = 0
-    while r.successful() and entry < step_count - 1:
+    while r.successful() and entry < N_steps - 1:
         entry = int(round(r.t / step)) + 1
         next_step = r.integrate(r.t + step)
         output[entry, :] = next_step
