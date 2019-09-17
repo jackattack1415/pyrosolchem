@@ -19,19 +19,17 @@ def convert_molar_abundances_to_mole_fractions(composition, x_water=0):
 
     Returns
     -------
-    xs_cmpd : array
+    x_cmpds : array
     array of mole fractions for compounds in composition.
-
-
     """
 
     if type(composition) is dict:
         composition = np.array(list(composition.values()))
 
     composition = normalize(composition)
-    xs_cmpd = composition * (1 - x_water)
+    x_cmpds = composition * (1 - x_water)
 
-    return xs_cmpd
+    return x_cmpds
 
 
 def convert_radius_to_volume(r):
@@ -129,23 +127,24 @@ def convert_moles_to_volume(compounds, ns):
 
 
 def calculate_vp_from_reference(vp_ref, dH, T_ref, T_desired):
-    '''Convert p0 and delta enthalpy to vapor pressure temp dependence params.
+    """Convert reference vp (vp_ref) and delta enthalpy (dh) to vapor pressure dependent on temperature.
 
     Parameters
     ----------
-    p0 : float or ndarray
+    vp_ref : float or ndarray
     Vapor pressure at reference temperature, Pa.
-    del_enth : float or ndarray
+    dH : float or ndarray
     Enthalpy of vaporization (or sublimation), J mol^-1.
-    t0 : float or ndarray
-    Reference temperature for p0 value, K.
+    T_ref : float or ndarray
+    Reference temperature for vp_ref value, K.
+    T_desired : float or ndarray
+    Desired temperature for vp_desired value, K.
 
     Returns
     -------
-    p0_a, p0_b : float
-    a (intercept, Pa) and b (slope, 1000/K) linear regression parameters for
-    temperature dependence of log10(vapor pressure).
-    '''
+    vp_desired : float or ndarray
+    Vapor pressure at desired temperature, Pa.
+    """
 
     a = 1 / np.log(10) * ((dH / (R * T_ref)) + np.log(vp_ref))
     b = -dH / (1000 * np.log(10) * R)
@@ -161,14 +160,14 @@ def convert_water_mole_fraction_to_moles(n_cmpds, x_water=0):
 
     Parameters
     ----------
-    n_cmpds : nd.array
+    n_cmpds : ndarray
     array of moles of compounds according to composition and droplet size.
     x_water : float
     water mole fraction.
 
     Returns
     -------
-    n_water : nd.array
+    n_water : ndarray
     array of moles offf water
     """
 
