@@ -1,5 +1,4 @@
-# pyvap : simple model of particle evaporation
-# author: Adam Birdsall
+# code modified from: https://github.com/awbirdsall/pyvap
 
 from __future__ import division
 from math import e
