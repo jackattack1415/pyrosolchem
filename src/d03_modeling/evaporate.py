@@ -10,7 +10,7 @@ def evaporate(compounds, water, params):
     :param water:  (dict) dictionary of definitions about water.
     :param params: (dict) dictionary of defintions about the system.
     :return: ns: (ndarray(floats)) 2D array of floats of moles by compound and time in simulation.
-    :return: rs: (ndarray(floats)) 1D array of floats of radii in time in simulation.
+    :return: rs: (ndarray(floats)) 1D array of floats of radii (m) in time in simulation.
     :return: ts: (ndarray(floats)) 1D array of floats of times in simulation.
     """
 
@@ -40,18 +40,18 @@ def evaporate(compounds, water, params):
     wet_cmpds, ns_all = add_water_to_droplet(compounds=compounds,
                                              water=water,
                                              ns_dry=ns_dry,
-                                             x_water=0)
+                                             x_water=params['x_water'])
 
     rs = np.empty(len(ns_all))
+    Vs = np.empty(len(ns_all))
     for tick in range(len(ns_all)):
-        V = convert_moles_to_volume(compounds=wet_cmpds,
-                                    ns=ns_all[tick])
-        rs[tick] = convert_volume_to_radius(V=V)
+        Vs[tick] = convert_moles_to_volume(compounds=wet_cmpds,
+                                           ns=ns_all[tick])
+        rs[tick] = convert_volume_to_radius(V=Vs[tick])
 
-    ts = np.linspace(0, params['step_size']*params['number_of_steps'], params['number_of_steps']+1,
-                     endpoint=False)
+    ts = np.arange(0, params['step_size']*params['number_of_steps'], params['step_size'])
 
-    return ns_dry, rs, ts
+    return ns_dry, rs, Vs, ts
 
 
 def add_water_to_droplet(compounds, water, ns_dry, x_water=0):
