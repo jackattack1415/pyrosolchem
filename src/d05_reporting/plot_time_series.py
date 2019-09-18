@@ -1,19 +1,55 @@
-# plot
-if complabels is None:
-    complabels = [x['name'] for x in cmpds]
+import os
+from datetime import date
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-if makefig:
-    xlabel = "time / h"
-    fig, (ax, ax2) = plot_evap(x=output_dict['t_a'] / 3600,
-                               molec_data=evap_a,
-                               r_data=r_a,
-                               series_labels=complabels,
-                               xlabel=xlabel)
-    output_dict.update({'evap_fig': (fig, (ax, ax2))})
-else:
-    output_dict.update({'evap_fig': None})
+from src.d00_utils.conf_utils import get_project_directory
 
-# e-folding times, converted from seconds to hours
-efold_dict = {l: efold_time(output_dict['t_a'] / 3600, evap_a[:, i])
-              for i, l in enumerate(complabels)}
-output_dict.update({'efold_dict': efold_dict})
+
+def plot_composition_evolution(compounds, ts, ys, y_axis, rs=None):
+    """ plots time evolution of compounds in solution (e.g., droplet).
+
+    :param compounds:
+    :param ts:
+    :param ys:
+    :param y_axis: (str) can either be M, n, or N and governs the resulting y axis label.
+    :param rs:
+    :param colors:
+    :return:
+    """
+
+    sns.set(style="ticks")  # sets sns as the rule
+    sns.set_context("talk")
+    sns.set_palette("Spectral")
+
+    N_cmpd = len(compounds)
+    compound_names = [defs['name'] for name, defs in compounds.items()]
+
+    hrs = ts / 3600
+    for tick in range(N_cmpd):
+        ax = sns.lineplot(x=hrs, y=ys[:, tick], label=compound_names[tick], alpha=1)
+
+    if y_axis == 'M':
+        y_label = 'M (mol  L$^{-1}$)'
+    elif y_axis == 'n':
+        y_label = 'moles'
+    elif y_axis == 'N':
+        y_label = 'molecules'
+
+    ax.set(xlabel='time (hr)', ylabel=y_label)
+    ax.legend(title='Compound')
+
+    if rs is not None:
+        ums = rs * 1e6
+
+        ax2 = ax.twinx()
+        ax2.plot(hrs, ums, color='black', linewidth=2, linestyle='--', alpha=0.4)
+        ax2.set(ylabel='r (um)')
+
+    project_dir = get_project_directory()
+    today_str = date.today().strftime("%Y%m%d")
+    cmpd_strings = '_'.join(compound_names)
+    fig = today_str[2:] + '_' + cmpd_strings + '_evap.png'
+    fig_path = os.path.join(project_dir, 'results', fig)
+
+    plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=True)
