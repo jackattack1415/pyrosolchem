@@ -168,9 +168,16 @@ def convert_water_mole_fraction_to_moles(n_cmpds, x_water=0):
     Returns
     -------
     n_water : ndarray
-    array of moles offf water
+    array of moles of water
     """
 
     n_water = np.sum(n_cmpds, axis=1) * (x_water / (1 - x_water))
 
     return n_water
+
+
+def convert_moles_to_molarity(n_cmpds, V):
+
+    M = n_cmpds / (V[:, None] * 1000)
+
+    return M
