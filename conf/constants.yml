@@ -1,9 +1,30 @@
-"r_init": 5e-5 # m
-"T": 298 # K
-"x_water": 0.7 # for the time being, we assume fixed
-"step_size": 100
-"number_of_steps": 1000
+## GLOBAL CONSTANTS
+# spring point
+geom_const: 2.83e-3 # from 170529-springpoint-numerical.ipynb
+mu: 1.846e-5 # gas viscocity air at 300 K, kg m^-1 s^-1
+kappa: 1 # stokes law correction for nonspherical particle
 
-composition:  # place in same order as compounds for time being
-  "triethylene_glycol": 0.1
-  "hexaethylene_glycol": 0.1
+rgn2_a:
+    - 1.2
+    - 2
+    - 2.8
+    - 3.6
+    - 4
+    - 4.8
+    - 5.2
+    - 6.
+    - 6.8
+    - 7.6
+    - 8.
+rgn2_b:
+    - 16.06
+    - 17.63
+    - 19.93
+    - 22.95
+    - 24.73
+    - 28.85
+    - 31.21
+    - 36.58
+    - 43.04
+    - 51.21
+    - 56.76

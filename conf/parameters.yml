@@ -1,0 +1,219 @@
+"r_init": 5e-5 # m
+"T": 298 # K
+"x_water": 0.7 # for the time being, we assume fixed
+"step_size": 100
+"number_of_steps": 1000
+
+composition:  # place in same order as compounds for time being
+  "triethylene_glycol": 0.1
+  "hexaethylene_glycol": 0.1
+
+
+bd10hg20:
+    m_bd: 0.075 # mass butenedial (non-hydrated), g
+    m_peg6: 0.2 # mass peg-6, g
+# NaCl (_s_odium _c_hloride)
+bd10hg10sc10:
+    m_bd: 0.075
+    m_peg6: 0.10
+    m_nacl: 0.2 # 0.1 * 2 to account for dissolution
+bd15hg14sc02:
+    m_bd: 0.113
+    m_peg6: 0.14
+    m_nacl: 0.04 # 0.02 * 2 to account for dissolution
+# Na2SO4 (_s_odium _s_ulfate)
+bd10hg10ss10:
+    m_bd: 0.075
+    m_peg6: 0.10
+    m_na2so4: 0.3 # 0.1 * 3 to account for dissolution
+bd10hg15ss05:
+    m_bd: 0.075
+    m_peg6: 0.15
+    m_na2so4: 0.15 # 0.5 * 3 to account for dissolution
+
+bd_hg_dry:
+    comptype: 'bd10hg20'
+    compnum: [8] # used to have 2 also
+    start_idx: 63
+    end_idx: 500 # arbitrary large number
+    bad_idx: [213]
+    trapmin: 2
+    trapmax: 50
+    other_query: 'rh<20'
+    y_col: 'n85'
+    p283_cutoff: 1000
+    label: 'BD (dry)'
+
+bd_hg_humid:
+    comptype: 'bd10hg20'
+    compnum: [2] # had tried 8
+    start_idx: 63
+    end_idx: 500 # arbitrary large number
+    bad_idx: null
+    trapmin: 2
+    trapmax: 300
+    other_query: 'rh>50' # and date>=181130'
+    y_col: 'n85'
+    p283_cutoff: 1000
+    label: 'BD (humid)'
+
+bd_nacl:
+    comptype: 'bd10hg10sc10'
+    compnum: [1]
+    start_idx: 63
+    end_idx: 225
+    bad_idx: [187]
+    trapmin: 0
+    trapmax: 250
+    other_query: 'rh>50'
+    y_col: 'n85'
+    p283_cutoff: 1000
+    label: 'BD + NaCl'
+
+bd_nacl_extra:
+    comptype: 'bd15hg14sc02'
+    compnum: [1]
+    start_idx: 63
+    end_idx: 500 # arbitrary large number
+    bad_idx: null
+    trapmin: 0
+    trapmax: 250
+    other_query: 'rh>50'
+    y_col: 'n85'
+    p283_cutoff: 1000
+    label: 'BD + NaCl (bd15hg14sc02)'
+
+bd_na2so4:
+    comptype: 'bd10hg10ss10'
+    compnum: [1]
+    start_idx: 63
+    end_idx: 225
+    bad_idx: [183, 184, 185, 186]
+    trapmin: 0
+    trapmax: 250
+    other_query: 'rh>50'
+    y_col: 'n85'
+    p283_cutoff: 1000
+    label: 'BD + Na2SO4'
+
+bd_na2so4_extra:
+    comptype: 'bd10hg15ss05'
+    compnum: [1]
+    start_idx: 63
+    end_idx: 500 # arbitrary large number
+    bad_idx: null
+    trapmin: 0
+    trapmax: 250
+    other_query: 'rh>50 and date>=190130 and date<=190201'
+    y_col: 'n85'
+    p283_cutoff: 1000
+    label: 'BD + Na2SO4 (bd10hg15ss05)'
+
+# parameters for model runs
+bd_dry_model_params:
+    numpts: 3.0e+3
+    r_dry_min: 11.4e-6
+    r_dry_max: 14.4e-6
+    temp_min: 298.6
+    temp_max: 301.6
+    rh_min: 0.00
+    rh_max: 0.05
+    xh2o_min: 0.00
+    xh2o_max: 0.05
+    cmpds:
+        - "bd_dry"
+        - "peg6"
+    value_idx: 0
+    norm_idx: 1
+    cal_data_time: 5
+
+bd_humid_model_params:
+    numpts: 3.0e+3
+    r_dry_min: 11.4e-6
+    r_dry_max: 14.4e-6
+    temp_min: 298.6
+    temp_max: 301.6
+    rh_min: 0.70
+    rh_max: 0.80
+    xh2o_min: 0.77
+    xh2o_max: 0.82
+    cmpds:
+        - "bd_humid"
+        - "peg6"
+    value_idx: 0
+    norm_idx: 1
+    cal_data_time: 10
+
+bd_nacl_model_params:
+    numpts: 3.0e+3
+    r_dry_min: 11.7e-6
+    r_dry_max: 15.9e-6
+    temp_min: 298.6
+    temp_max: 301.6
+    rh_min: 0.70
+    rh_max: 0.80
+    xh2o_min: 0.79
+    xh2o_max: 0.85
+    cmpds:
+        - "bd_humid"
+        - "peg6"
+        - "nacl"
+    value_idx: 0
+    norm_idx: 1
+    cal_data_time: 20
+
+# params for bd15hg14sc02 case
+bd_nacl_model_params_extra:
+    numpts: 3.0e+3
+    r_dry_min: 11.7e-6
+    r_dry_max: 15.9e-6
+    temp_min: 298.6
+    temp_max: 301.6
+    rh_min: 0.70
+    rh_max: 0.80
+    xh2o_min: 0.74
+    xh2o_max: 0.82
+    cmpds:
+        - "bd_humid"
+        - "peg6"
+        - "nacl"
+    value_idx: 0
+    norm_idx: 1
+    cal_data_time: 30
+
+bd_na2so4_model_params:
+    numpts: 3.0e+3
+    r_dry_min: 13.0e-6
+    r_dry_max: 17.7e-6
+    temp_min: 298.6
+    temp_max: 301.6
+    rh_min: 0.70
+    rh_max: 0.80
+    xh2o_min: 0.77
+    xh2o_max: 0.84
+    cmpds:
+        - "bd_humid"
+        - "peg6"
+        - "na2so4"
+    value_idx: 0
+    norm_idx: 1
+    cal_data_time: 15
+
+# params for bd10hg15ss05 case
+bd_na2so4_model_params_extra:
+    numpts: 3.0e+3
+    r_dry_min: 11.7e-6
+    r_dry_max: 15.9e-6
+    temp_min: 298.6
+    temp_max: 301.6
+    rh_min: 0.70
+    rh_max: 0.80
+    xh2o_min: 0.76
+    xh2o_max: 0.83
+    cmpds:
+        - "bd_humid"
+        - "peg6"
+        - "na2so4"
+    value_idx: 0
+    norm_idx: 1
+    cal_data_time: 15
