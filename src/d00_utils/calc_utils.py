@@ -2,7 +2,7 @@
 
 from __future__ import division
 import numpy as np
-from scipy.constants import pi, R
+from scipy.constants import pi, R, N_A
 
 from src.d00_utils.misc_utils import normalize
 
@@ -178,6 +178,13 @@ def convert_water_mole_fraction_to_moles(n_cmpds, x_water=0):
 
 def convert_moles_to_molarity(n_cmpds, V):
 
-    M = n_cmpds / (V[:, None] * 1000)
+    M_cmpds = n_cmpds / (V[:, None] * 1000)
 
-    return M
+    return M_cmpds
+
+
+def convert_moles_to_molecules(n_cmpds):
+
+    N_cmpds = n_cmpds * N_A
+
+    return N_cmpds
