@@ -7,15 +7,13 @@ from src.d00_utils.conf_utils import get_project_directory
 
 
 def plot_composition_evolution(compounds, ts, ys, y_axis, rs=None):
-    """ plots time evolution of compounds in solution (e.g., droplet).
+    """ plots time evolution of compounds in solution (e.g., droplet). Figure saved in results as png.
 
-    :param compounds:
-    :param ts:
-    :param ys:
-    :param y_axis: (str) can either be M, n, or N and governs the resulting y axis label.
-    :param rs:
-    :param colors:
-    :return:
+    :param compounds: (dict) dictionary of definitions of each compound.
+    :param ts: (ndarray(floats)) 1D array of floats of times in simulation.
+    :param ys: (ndarray(floats)) 2D array of floats of y parameter to plot by compound and time in simulation.
+    :param y_axis: (str) can either be M, n, or N and governs the resulting y axis label. corresponds to ys.
+    :param rs: (ndarray(floats)) 1D array of floats of radii (m) in time in simulation. Not plotted if None.
     """
 
     sns.set(style="ticks")  # sets sns as the rule
@@ -35,6 +33,8 @@ def plot_composition_evolution(compounds, ts, ys, y_axis, rs=None):
         y_label = 'moles'
     elif y_axis == 'N':
         y_label = 'molecules'
+    else:
+        print('y parameter not valid for plotting')
 
     ax.set(xlabel='time (hr)', ylabel=y_label)
     ax.legend(title='Compound')
