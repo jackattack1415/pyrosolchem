@@ -1,0 +1,9 @@
+"r_init": 5e-5 # m
+"T": 298 # K
+"x_water": 0.7 # for the time being, we assume fixed
+"step_size": 100
+"number_of_steps": 1000
+
+composition:  # place in same order as compounds for time being
+  "triethylene_glycol": 0.1
+  "hexaethylene_glycol": 0.1
