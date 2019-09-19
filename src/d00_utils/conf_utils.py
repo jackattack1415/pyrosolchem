@@ -32,7 +32,7 @@ def load_compounds():
     return compounds, water
 
 
-def load_parameters():
+def load_constants():
     """ Returns constants.
         Outputs
         ---
@@ -40,8 +40,23 @@ def load_parameters():
     """
 
     project_directory = get_project_directory()
-    filepath = os.path.join(project_directory, 'conf', 'parameters.yml')
+    filepath = os.path.join(project_directory, 'conf', 'constants.yml')
     with open(filepath) as f:
-        initial_conditions = ruamel.yaml.safe_load(f)
+        constants = ruamel.yaml.safe_load(f)
 
-    return initial_conditions
+    return constants
+
+
+def load_experiments():
+    """ Returns constants.
+        Outputs
+        ---
+        project_directory (str): path back to top level directory
+    """
+
+    project_directory = get_project_directory()
+    filepath = os.path.join(project_directory, 'conf', 'experimental_parameters.yml')
+    with open(filepath) as f:
+        experiments = ruamel.yaml.safe_load(f)
+
+    return experiments
