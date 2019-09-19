@@ -1,0 +1,187 @@
+## DICTIONARIES OF PARAMETERS BY EXPERIMENT
+#EXPERIMENT NAME:
+#  # experimental parameters
+#  composition:  # in solution, mass fraction
+#    compound1: mass (g)
+#    compound2: mass (g)
+#  compnum: [XX]  # range of compositions: compound1compound2_XX
+#  idx_range: [idx_min, idx_max]  # range of indices to use from the data sheet
+#  bad_idx: null
+#  trap_time: [trap_time_min, trap_time_max]  # range of trap times used
+#  other_query: 'rh<20'  # queries used to scan out for certain exp params embedded in columns of dataset e.g., rh<xx
+#  y_col: 'NAME OF COLUMN'  # column containing the normalized intensities
+#  p283_cutoff: 1000  # minimum internal standard signal
+#
+#  # modeling parameters
+#  number_of_steps: 1.0e+3  # number of steps (default, seconds) taken
+#  step_size = 1  # seconds per step
+#  r_init: [r_init_min, r_init_max] OR r_init
+#  T: [T_min, T_max] OR T
+#  RH: [RH_min, RH_max] OR RH
+#  x_water: [x_water_min, x_water_max] OR x_water
+#  value_idx: 0  # index of dataframes corresponding to the object of interest
+#  norm_idx: 1  # index of dataframes corresponding to the internal standard
+#  cal_data_time: t_calibration_max  # maximum time from which to take t=0 data points
+#
+#  # plotting parameters
+#  label: 'TITLE OF GRAPH'
+
+bd_hg_dry:
+  # experimental parameters
+  composition:
+    Butenedial: 0.075 # mass butenedial (non-hydrated), g
+    PEG-6: 0.2 # mass peg-6, g
+  compnum: [8] # used to have 2 also
+  idx_range: [63, 500] # arbitrary large number
+  bad_idx: [213]
+  trap_time: [2, 50]
+  other_query: 'rh<20'
+  y_col: 'n85'
+  p283_cutoff: 1000
+
+  # modeling parameters
+  number_of_steps: 3.0e+3
+  r_init: [11.4e-6, 14.4e-6]  # DRY
+  T: [298.6, 301.6]
+  RH: [0.00, 0.05]
+  x_water: [0.00, 0.05]
+  value_idx: 0
+  norm_idx: 1
+  cal_data_time: 5
+
+  # plotting parameters
+  label: 'BD (dry)'
+
+bd_hg_humid:
+  # experimental parameters
+  composition:
+    Butenedial: 0.075
+    PEG-6: 0.2
+  compnum: [2] # had tried 8
+  idx_range: [63, 500]
+  bad_idx: null
+  trap_time: [2, 300]
+  other_query: 'rh>50' # and date>=181130'
+  y_col: 'n85'
+  p283_cutoff: 1000
+
+  # modeling parameters
+  number_of_steps: 3.0e+3
+  r_init: [11.4e-6, 14.4e-6]  # DRY
+  T: [298.6, 301.6]
+  RH: [0.70, 0.80]
+  x_water: [0.77, 0.82]
+  value_idx: 0
+  norm_idx: 1
+  cal_data_time: 10
+
+  # plotting parameters
+  label: 'BD (humid)'
+
+bd_nacl_high:
+  # experimental parameters
+  composition:
+    Butenedial: 0.075
+    PEG-6: 0.10
+    Sodium Chloride: 0.2 # 0.1 * 2 to account for dissolution
+  compnum: [1]
+  idx_range: [63, 225]
+  bad_idx: [187]
+  trap_time: [0, 250]
+  other_query: 'rh>50'
+  y_col: 'n85'
+  p283_cutoff: 1000
+
+  # modeling parameters
+  number_of_steps: 3.0e+3
+  r_init: [11.7e-6, 15.9e-6]  # DRY
+  T: [298.6, 301.6]
+  RH: [0.70, 0.80]
+  x_water: [0.79, 0.85]
+  value_idx: 0
+  norm_idx: 1
+  cal_data_time: 20
+
+  # plotting parameters
+  label: 'BD + NaCl'
+
+bd_nacl_low:
+  # experimental parameters
+  composition:
+    Butenedial: 0.113
+    PEG-6: 0.14
+    Sodium Chloride: 0.04 # 0.02 * 2 to account for dissolution
+  compnum: [1]
+  idx_range: [63, 500]
+  bad_idx: null
+  trap_time: [0, 250]
+  other_query: 'rh>50'
+  y_col: 'n85'
+  p283_cutoff: 1000
+
+  # modeling parameters
+  number_of_steps: 3.0e+3
+  r_init: [11.7e-6, 15.9e-6]  # DRY
+  T: [298.6, 301.6]
+  RH: [0.70, 0.80]
+  x_water: [0.74, 0.82]
+  value_idx: 0
+  norm_idx: 1
+  cal_data_time: 30
+
+  # plotting parameters
+  label: 'BD + NaCl (bd15hg14sc02)'
+
+bd_na2so4_high:
+  # experimental parameters
+  composition:
+    Butenedial: 0.075
+    PEG-6: 0.10
+    Sodium Sulfate: 0.3 # 0.1 * 3 to account for dissolution
+  compnum: [1]
+  idx_range: [63, 225]
+  bad_idx: [183, 184, 185, 186]
+  trap_time: [0, 250]
+  other_query: 'rh>50'
+  y_col: 'n85'
+  p283_cutoff: 1000
+
+  # modeling parameters
+  number_of_steps: 3.0e+3
+  r_init: [13.0e-6, 17.7e-6]  # DRY
+  T: [298.6, 301.6]
+  RH: [0.70, 0.80]
+  x_water: [0.77, 0.84]
+  value_idx: 0
+  norm_idx: 1
+  cal_data_time: 15
+
+  # plotting parameters
+  label: 'BD + Na2SO4'
+
+bd_na2so4_low:
+  # experimental parameters
+  composition:
+    Butenedial: 0.075
+    PEG-6: 0.15
+    Sodium Sulfate: 0.15 # 0.05 * 3 to account for dissolution
+  compnum: [1]
+  idx_range: [63, 500]
+  bad_idx: null
+  trap_time: [0, 250]
+  other_query: 'rh>50 and date>=190130 and date<=190201'
+  y_col: 'n85'
+  p283_cutoff: 1000
+
+  # modeling parameters
+  number_of_steps: 3.0e+3
+  r_init: [11.7e-6, 15.9e-6]  # DRY
+  T: [298.6, 301.6]
+  RH: [0.70, 0.80]
+  x_water: [0.76, 0.83]
+  value_idx: 0
+  norm_idx: 1
+  cal_data_time: 15
+
+  # plotting parameters
+  label: 'BD + Na2SO4 (bd10hg15ss05)'
