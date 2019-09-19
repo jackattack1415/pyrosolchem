@@ -21,3 +21,16 @@ def import_ms_data(file_name, directory=None):
     df = pd.read_csv(data_path)
 
     return df
+
+
+def add_normalized_intensity_column(df, internal_std='p283'):
+    """Add "n###" columns to DataFrame of normalized peak intensities.
+
+    """
+
+    p_cols = [col for col in df.columns if col[0] == 'p']  # first column of mass spec peaks is p
+
+    for tick, p_col in enumerate(p_cols):
+        df['n' + p_col[1:]] = df[p_col] / df[internal_std]
+
+    return df
