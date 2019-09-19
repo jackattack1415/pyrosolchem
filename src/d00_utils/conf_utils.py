@@ -55,8 +55,23 @@ def load_experiments():
     """
 
     project_directory = get_project_directory()
-    filepath = os.path.join(project_directory, 'conf', 'experimental_parameters.yml')
+    filepath = os.path.join(project_directory, 'conf', 'experiments.yml')
     with open(filepath) as f:
         experiments = ruamel.yaml.safe_load(f)
 
     return experiments
+
+
+def load_paths():
+    """ Returns constants.
+        Outputs
+        ---
+        project_directory (str): path back to top level directory
+    """
+
+    project_directory = get_project_directory()
+    filepath = os.path.join(project_directory, 'conf', 'paths.yml')
+    with open(filepath) as f:
+        paths = ruamel.yaml.safe_load(f)
+
+    return paths
