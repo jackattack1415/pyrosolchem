@@ -5,7 +5,7 @@ from datetime import date
 
 from src.d00_utils.conf_utils import get_project_directory
 from src.d00_utils.calc_utils import convert_mass_to_molar_composition
-from src.d00_utils.misc_utils import perform_bootstrap
+from src.d00_utils.processing_utils import perform_bootstrap
 
 
 def import_ms_data(file_name, directory=None):

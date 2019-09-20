@@ -1,6 +1,6 @@
 from src.d00_utils.calc_utils import *
 from src.d00_utils.flux_utils import (gas_particle_partition, pack_partition_dict)
-from src.d02_processing.numerical_model import differentiate
+from src.d00_utils.diff_utils import differentiate
 
 
 def evaporate(compounds, water, params):

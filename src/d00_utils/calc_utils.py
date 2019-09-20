@@ -4,7 +4,7 @@ from __future__ import division
 import numpy as np
 from scipy.constants import pi, R, N_A
 
-from src.d00_utils.misc_utils import normalize
+from src.d00_utils.processing_utils import normalize
 
 
 def convert_molar_abundances_to_mole_fractions(composition, x_water=0):
