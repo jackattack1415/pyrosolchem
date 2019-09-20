@@ -20,6 +20,17 @@ def normalize(unnormalized_array):
     return normalized_array
 
 
-def unpack_dictionary(dictionary):
-    for key, value in dictionary.items():
-        exec(key + '=value')
+def get_bootstrap_sample(dataset):
+    bootstrap_sample = np.random.choice(dataset, size=len(dataset))
+
+    return bootstrap_sample
+
+
+def perform_bootstrap(dataset):
+    n = 10000
+    samples = np.empty(shape=(n, len(dataset)))
+
+    for tick in range(n):
+        samples[tick] = get_bootstrap_sample(dataset)
+
+    return samples
