@@ -1,8 +1,11 @@
 import os
 import pandas as pd
+import numpy as np
 from datetime import date
 
 from src.d00_utils.conf_utils import get_project_directory
+from src.d00_utils.calc_utils import convert_mass_to_molar_composition
+from src.d00_utils.misc_utils import perform_bootstrap
 
 
 def import_ms_data(file_name, directory=None):
@@ -24,42 +27,44 @@ def import_ms_data(file_name, directory=None):
     return df
 
 
-def add_normalized_intensity_column(df, internal_std='p283'):
-    """Add "n###" columns to DataFrame of normalized peak intensities.
-
+def extract_calibration_data(df, t0_cutoff):
     """
 
-    p_cols = [col for col in df.columns if col[0] == 'p']  # first column of mass spec peaks is p
-
-    for tick, p_col in enumerate(p_cols):
-        df['n' + p_col[1:]] = df[p_col] / df[internal_std]
-
-    return df
-
-
-def filter_ms_data_in_experiments(df, experiment_parameters):
-    """
+    :param df:
+    :param data_col:
+    :param t0_cutoff:
+    :return:
     """
 
-    df_filtered = pd.DataFrame()
-    for experiment_name, experiment in experiment_parameters.items():
-        query_parts = []
-        query_parts.append("comp == '{}'".format(experiment['solution_name']))
-        query_parts.append("trapped>={} and trapped<{}".format(*experiment['trap_time']))
+    calibration_data_query = "trapped<={}".format(t0_cutoff)
+    data_for_calibration = df.query(calibration_data_query)
 
-        if experiment['other_query'] is not None:
-            query_parts.append(experiment['other_query'])
+    return data_for_calibration
 
-        query = " and ".join(query_parts)
 
-        df_experiment = (df.query(query).
-                             loc[experiment['idx_range'][0]:experiment['idx_range'][1]])
-        if experiment['bad_idx'] is not None:
-            df_experiment = df_experiment.drop(experiment['bad_idx'])
+def convert_normalized_ms_signals_to_molar_ratio(df, norm_ms_signal_col, experiments, compounds,
+                                                 starting_molar_composition, internal_standard='PEG-6'):
 
-        df_filtered = df_filtered.append(df_experiment)
+    data_for_calibration = extract_calibration_data(df, experiments['cal_data_time'])
 
-    return df_filtered
+    ms_signals = perform_bootstrap(data_for_calibration[norm_ms_signal_col])
+    ms_signal_means = np.mean(ms_signals, axis=0)
+    avg_ms_signal = np.mean(ms_signal_means)
+    std_ms_signal_means = np.std(ms_signal_means)
+
+    # relative standard deviation
+    rel_std_ms_signal = std_ms_signal_means / avg_ms_signal
+
+    # experimental molar ratio relative to internal standard
+    molar_composition = convert_mass_to_molar_composition(compounds, mass_composition)
+
+    mole_ratio = molar_composition[compounds]
+    # Get conversion factor: (mole ratio) / (bootstrapped MS signal ratio)
+    # defined as distribution from bootstrapping with mean and std
+    scale_avg = mole_ratio / avg_ms_signal
+    scale_std = rel_std_ms_signal * scale_avg
+
+    return scale_avg, scale_std
 
 
 def save_data_frame(df_to_save, raw_data_path, level_of_cleaning):
