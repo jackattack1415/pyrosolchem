@@ -34,7 +34,7 @@
   "dH_max": 103.6e+3
 
 "butenedial":
-  name: "butenedial dry"
+  name: "Butenedial"
   Dg: 8.556e-6
   M: 0.1201
   rho: 1060
@@ -72,7 +72,7 @@ sodium_sulfate:
   dH_max: 103.6e+3
 
 "water":
-  "name": 'h2o'
+  "name": 'H2O'
   "D_g": 2.08e-5 # at T = 20 deg C
   "mw": 0.018
   "rho": 997
