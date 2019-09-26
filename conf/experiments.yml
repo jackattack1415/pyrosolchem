@@ -11,7 +11,7 @@
 #  other_query: 'rh<20'  # queries used to scan out for certain exp params embedded in columns of dataset e.g., rh<xx
 #  y_col: 'NAME OF COLUMN'  # column containing the normalized intensities
 #  p283_cutoff: 1000  # minimum internal standard signal
-#  columns_to_keep: ['trapped', 'comp', 'experiment_name']
+#  columns_to_keep: ['trapped', 'comp', 'experiment', 'mz85_mz283']
 #
 #  # modeling parameters
 #  number_of_steps: 1.0e+3  # number of steps (default, seconds) taken
@@ -27,7 +27,55 @@
 #  # plotting parameters
 #  label: 'TITLE OF GRAPH'
 
-bd_hg_dry:
+bd_nh3g:
+  raw_data_file: '190924-butenedial-nh3g-droplets.csv'
+  # experimental parameters
+  composition:  # in solution, mass fraction
+    Butenedial: 0.75
+    PEG-6: 0.2
+  solution_name: ['butenedial-peg6-181016', 'butenedial-peg6-181018']
+  bad_idx: null
+  idx_range: null
+  trap_time: null # range of trap times used
+  other_query: 'solution=="butenedial-peg6-181016" or solution=="butenedial-peg6-181018"'
+  y_col: 'mz84_mz283'  # column containing the normalized intensities
+  p283_cutoff: 30000  # minimum internal standard signal
+  columns_to_keep: ['trapped', 'solution', 'nh3_bubbler', 'mz84_mz283', 'mz85_mz283', 'mz149_mz283']
+
+bd_as_vial:
+  raw_data_file: '190918-butenedial-ammonia-droplets.csv'
+  # experimental parameters
+  composition:  # in solution, mass fraction
+    Butenedial: 0.75*0.07
+    PEG-6: 0.2
+    NH42SO4: 0.03*3 # account for dissolution
+  solution_name: null
+  bad_idx: null
+  idx_range: null
+  trap_time: [0, 10]  # range of trap times used
+  other_query: 'comptype=="bd07hg20as03" and trapped<10 and p283>30000'
+  y_col: 'mz84_mz283'  # column containing the normalized intensities
+  p283_cutoff: 30000  # minimum internal standard signal
+  columns_to_keep: ['trapped', 'comp', 'experiment', 'vial', 'mz84_mz283', 'mz85_mz283']
+
+bd_as_droplet:
+  raw_data_file: '190918-butenedial-ammonia-droplets.csv'
+  # experimental parameters
+  composition:  # in solution, mass fraction
+    Butenedial: 0.75*0.07
+    PEG-6: 0.2
+    NH42SO4: 0.03*3 # account for dissolution
+  solution_comp: 'bd07hg20as03'
+  bad_idx: 100
+  idx_range: null
+  trap_time: null  # range of trap times used
+  other_query: 'vial<10 and comptype=="bd07hg20as03"'
+  y_col: 'mz84_mz283' # column containing the normalized intensities
+  p283_cutoff: 30000  # minimum internal standard signal
+  columns_to_keep: ['trapped', 'comp', 'experiment', 'vial', 'mz84_mz283', 'mz85_mz283']
+
+bd_dry:
+  raw_data_file: '190918-butenedial-droplets.csv'
   # experimental parameters
   composition:
     Butenedial: 0.075 # mass butenedial (non-hydrated), g
@@ -36,10 +84,10 @@ bd_hg_dry:
   idx_range: [63, 500] # arbitrary large number
   bad_idx: [113]
   trap_time: [2, 50]
-  other_query: 'rh<20'
-  y_col: 'n85'
+  other_query: 'rh<20 and comp=="bd10hg20_008"'
+  y_col: 'mz85_mz283'
   p283_cutoff: 1000
-  columns_to_keep: ['trapped', 'comp', 'experiment_name']
+  columns_to_keep: ['trapped', 'comp', 'experiment', 'mz85_mz283']
 
   # modeling parameters
   number_of_steps: 3.0e+3
@@ -54,19 +102,20 @@ bd_hg_dry:
   # plotting parameters
   label: 'BD (dry)'
 
-bd_hg_humid:
+bd_wet:
+  raw_data_file: '190918-butenedial-droplets.csv'
   # experimental parameters
   composition:
     Butenedial: 0.075
     PEG-6: 0.2
   solution_name: 'bd10hg20_002'
-  idx_range: [63, 500]
+  idx_range: [16, 500]
   bad_idx: null
   trap_time: [2, 300]
-  other_query: 'rh>50' # and date>=181130'
-  y_col: 'n85'
+  other_query: '(rh>50 or trapped<5) and comp=="bd10hg20_002"' # and date>=181130'
+  y_col: 'mz85_mz283'
   p283_cutoff: 1000
-  columns_to_keep: ['trapped', 'comp', 'experiment_name']
+  columns_to_keep: ['trapped', 'comp', 'experiment', 'mz85_mz283']
 
   # modeling parameters
   number_of_steps: 3.0e+3
@@ -76,12 +125,13 @@ bd_hg_humid:
   x_water: [0.77, 0.82]
   value_idx: 0
   norm_idx: 1
-  cal_data_time: 10
+  cal_data_time: 5
 
   # plotting parameters
   label: 'BD (humid)'
 
 bd_nacl_high:
+  raw_data_file: '190918-butenedial-droplets.csv'
   # experimental parameters
   composition:
     Butenedial: 0.075
@@ -91,10 +141,10 @@ bd_nacl_high:
   idx_range: [16, 125]
   bad_idx: [87]
   trap_time: [0, 250]
-  other_query: 'rh>50'
-  y_col: 'n85'
+  other_query: 'rh>50 and comp=="bd10hg10sc10_001"'
+  y_col: 'mz85_mz283'
   p283_cutoff: 1000
-  columns_to_keep: ['trapped', 'comp', 'experiment_name']
+  columns_to_keep: ['trapped', 'comp', 'experiment', 'mz85_mz283']
 
   # modeling parameters
   number_of_steps: 3.0e+3
@@ -110,6 +160,7 @@ bd_nacl_high:
   label: 'BD + NaCl'
 
 bd_nacl_low:
+  raw_data_file: '190918-butenedial-droplets.csv'
   # experimental parameters
   composition:
     Butenedial: 0.113
@@ -119,10 +170,10 @@ bd_nacl_low:
   idx_range: [16, 500]
   bad_idx: null
   trap_time: [0, 250]
-  other_query: 'rh>50'
-  y_col: 'n85'
+  other_query: 'rh>50 and comp=="bd15hg14sc02_001"'
+  y_col: 'mz85_mz283'
   p283_cutoff: 1000
-  columns_to_keep: ['trapped', 'comp', 'experiment_name']
+  columns_to_keep: ['trapped', 'comp', 'experiment', 'mz85_mz283']
 
   # modeling parameters
   number_of_steps: 3.0e+3
@@ -138,6 +189,7 @@ bd_nacl_low:
   label: 'BD + NaCl'
 
 bd_na2so4_high:
+  raw_data_file: '190918-butenedial-droplets.csv'
   # experimental parameters
   composition:
     Butenedial: 0.075
@@ -147,10 +199,10 @@ bd_na2so4_high:
   idx_range: [16, 125]
   bad_idx: [83, 84, 85, 86]
   trap_time: [0, 250]
-  other_query: 'rh>50'
-  y_col: 'n85'
+  other_query: 'rh>50 and comp=="bd10hg10ss10_001"'
+  y_col: 'mz85_mz283'
   p283_cutoff: 1000
-  columns_to_keep: ['trapped', 'comp', 'experiment_name']
+  columns_to_keep: ['trapped', 'comp', 'experiment', 'mz85_mz283']
 
   # modeling parameters
   number_of_steps: 3.0e+3
@@ -166,6 +218,7 @@ bd_na2so4_high:
   label: 'BD + Na2SO4'
 
 bd_na2so4_low:
+  raw_data_file: '190918-butenedial-droplets.csv'
   # experimental parameters
   composition:
     Butenedial: 0.075
@@ -175,10 +228,10 @@ bd_na2so4_low:
   idx_range: [16, 500]
   bad_idx: null
   trap_time: [0, 250]
-  other_query: 'rh>50 and date>=190130 and date<=190201'
-  y_col: 'n85'
+  other_query: 'rh>50 and date>=190130 and date<=190201 and comp=="bd10hg15ss05_001"s'
+  y_col: 'mz85_mz283'
   p283_cutoff: 1000
-  columns_to_keep: ['trapped', 'comp', 'experiment_name']
+  columns_to_keep: ['trapped', 'comp', 'experiment', 'mz85_mz283']
 
   # modeling parameters
   number_of_steps: 3.0e+3
