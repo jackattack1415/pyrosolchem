@@ -49,7 +49,7 @@ def plot_composition_evolution(compounds, ts, ys, y_axis, rs=None):
     project_dir = get_project_directory()
     today_str = date.today().strftime("%Y%m%d")
     cmpd_strings = '_'.join(compound_names)
-    fig = today_str[2:] + '_' + cmpd_strings + '_evap.png'
+    fig = today_str[2:] + '-' + 'model' + '-' + cmpd_strings + '-evap.png'
     fig_path = os.path.join(project_dir, 'results', fig)
 
     plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=True)
