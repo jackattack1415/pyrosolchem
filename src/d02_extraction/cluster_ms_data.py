@@ -12,7 +12,7 @@ def add_clusters_to_dataframe(df, col_to_cluster, N_clusters):
     return df_with_clusters
 
 
-def create_clustered_statistics_dataframe(df_cleaned, col_to_cluster, y_cols_to_keep):
+def create_clustered_statistics_dataframe(df_cleaned, col_to_cluster, y_cols_to_keep, max_points_per_cluster=3):
     """"""
 
     cols_to_keep = y_cols_to_keep
@@ -24,7 +24,7 @@ def create_clustered_statistics_dataframe(df_cleaned, col_to_cluster, y_cols_to_
         df_exp = df_cleaned[df_cleaned.experiment == experiment_name]
 
         if len(df_exp) >= 4:
-            N_clusters = math.floor(len(df_exp) / 3)
+            N_clusters = math.floor(len(df_exp) / max_points_per_cluster)
         elif len(df_exp) < 4:
             N_clusters = len(df_exp)
         df_with_clusters = add_clusters_to_dataframe(df=df_exp,
