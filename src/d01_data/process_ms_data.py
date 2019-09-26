@@ -1,67 +1,78 @@
 import pandas as pd
 
-
-def filter_ms_data_in_experiments(df, experiment_parameters):
-    """
-    """
-
-    df_filtered = pd.DataFrame()
-    for experiment_name, experiment in experiment_parameters.items():
-        query_parts = []
-        query_parts.append("comp == '{}'".format(experiment['solution_name']))
-        query_parts.append("trapped>={} and trapped<{}".format(*experiment['trap_time']))
-
-        if experiment['other_query'] is not None:
-            query_parts.append(experiment['other_query'])
-
-        query = " and ".join(query_parts)
-
-        df_experiment = (df.query(query).loc[experiment['idx_range'][0]:experiment['idx_range'][1]])
-        if experiment['bad_idx'] is not None:
-            df_experiment = df_experiment.drop(experiment['bad_idx'])
-
-        df_experiment['experiment_name'] = experiment_name
-        df_filtered = df_filtered.append(df_experiment)
-
-    return df_filtered
+from src.d00_utils.processing_utils import get_bootstrapped_statistics
+from src.d00_utils.data_utils import extract_calibration_data
 
 
-def clean_ms_data_in_experiments(df_filtered, experiment_parameters):
-    """
-    """
-
-    df_cleaned = pd.DataFrame()
-
-    for name, experiment in experiment_parameters.items():
-        experiment_cleaned = df_filtered[df_filtered.experiment_name == name][experiment['columns_to_keep']]
-
-        df_cleaned = df_cleaned.append(experiment_cleaned)
-
-    df_cleaned.rename(columns={'trapped': 'mins'})
-
-    return df_cleaned
-
-
-def process_ms_data_in_experiments(df_cleaned, compounds):
+def process_ms_data_in_evap_experiments(df_cleaned, experiments):
     """
     """
 
     df_processed = df_cleaned.copy(deep=True)
+    df_processed = add_calibrated_ms_data_columns(df=df_processed,
+                                                  experiments=experiments,
+                                                  analyte='Butenedial',
+                                                  internal_standard='PEG-6')
 
     df_processed.rename(columns={'mins': 'hrs'})
     df_processed.hrs = df_cleaned.hrs / 60
 
-    return df_cleaned
+    return df_processed
 
 
-def add_normalized_intensity_column(df, internal_std='p283'):
-    """Add "n###" columns to DataFrame of normalized peak intensities.
-
+def process_ms_data_in_droplet_vs_vial_experiments(df_cleaned):
+    """
     """
 
-    p_cols = [col for col in df.columns if col[0] == 'p']  # first column of mass spec peaks is p
+    df_processed = df_cleaned.copy(deep=True)
+    df_processed['hrs'] = (df_processed.mins + df_processed.vial) / 60
+    df_processed.drop(['vial', 'mins'], axis=1)
 
-    for tick, p_col in enumerate(p_cols):
-        df['n' + p_col[1:]] = df[p_col] / df[internal_std]
+    return df_processed
 
-    return df
+
+def process_ms_data_in_nh3g_experiments(df_cleaned):
+    """
+    """
+
+    df_processed = df_cleaned.copy(deep=True)
+    df_processed['experiment'] = 'bd_nh3g_' + df_processed.nh3_bubbler.astype(str).str.replace('.','')
+
+    # df_processed['mM_nhx']  add this to the droplet definitions soon
+
+    return df_processed
+
+
+
+def add_calibrated_ms_data_columns(df, experiments, analyte, internal_standard='PEG-6'):
+    """"""
+
+    df_calibrated = pd.DataFrame()
+    for experiment_name, experiment_defs in experiments.items():
+
+        df_experiment = df[df.experiment == experiment_name]
+        ms_signal_inits = extract_calibration_data(df=df_experiment,
+                                                   t_init_cutoff=experiment_defs['cal_data_time'],
+                                                   cal_data_col=experiment_defs['y_col'])
+        ms_signal_inits_avg, ms_signal_inits_rel_std = get_bootstrapped_statistics(ms_signal_inits)
+
+        for compound_name, compound_mol_frac in experiment_defs['composition'].items():
+            internal_standard_mol_frac = experiment_defs['composition'][internal_standard]
+
+            if compound_name == analyte:
+                rel_molar_abundance_in_solution = compound_mol_frac / internal_standard_mol_frac
+                cal_factor_avg = rel_molar_abundance_in_solution / ms_signal_inits_avg
+                cal_factor_std = ms_signal_inits_rel_std
+
+                cal_data_col = experiment_defs['y_col'].replace('mz', 'mol')
+
+                df_experiment[cal_data_col] = df_experiment[experiment_defs['y_col']] * cal_factor_avg
+                df_experiment[cal_data_col + '_std'] = df_experiment[cal_data_col] * cal_factor_std
+
+                decay_data_col = cal_data_col.split('/')[0] + '/' + cal_data_col.split('/')[0] + '_0'
+                df_experiment[decay_data_col] = df_experiment[cal_data_col] / \
+                                                rel_molar_abundance_in_solution
+
+        df_calibrated = df_calibrated.append(df_experiment)
+
+    return df_calibrated
