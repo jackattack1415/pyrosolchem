@@ -188,3 +188,15 @@ def convert_moles_to_molecules(n_cmpds):
     N_cmpds = n_cmpds * N_A
 
     return N_cmpds
+
+
+def convert_mass_to_molar_composition(mass_composition, compounds):
+
+    molar_composition = {}
+    for component, mass_fraction in mass_composition.items():
+        for name, compound in compounds.items():
+            if compound['name'] == component:
+                mole_fraction = mass_fraction / compound['mw']
+                molar_composition.update({component: mole_fraction})
+
+    return molar_composition
