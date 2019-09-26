@@ -47,17 +47,19 @@ def load_constants():
     return constants
 
 
-def load_experiments():
-    """ Returns constants.
-        Outputs
-        ---
-        project_directory (str): path back to top level directory
+def load_experiments(experiment_names=None):
+    """ Returns experimental parameters for experiment names of choice.
     """
 
     project_directory = get_project_directory()
     filepath = os.path.join(project_directory, 'conf', 'experiments.yml')
     with open(filepath) as f:
         experiments = ruamel.yaml.safe_load(f)
+
+    if experiment_names is None:
+        experiments = experiments
+    elif experiment_names is not None:
+        experiments = dict((exp, experiments[exp]) for exp in experiment_names)
 
     return experiments
 
