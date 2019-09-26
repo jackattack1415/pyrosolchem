@@ -1,4 +1,4 @@
-raw_data: '190918-butenedial-droplets.csv'
+raw_data: '190918-butenedial-ammonia-droplets.csv'
 filtered_data: '190919-butenedial-droplets_FILTERED.csv'
 cleaned_data: '190919-butenedial-droplets_CLEANED.csv'
 processed_data: '190919-butenedial-droplets_PROCESSED.csv'
