@@ -8,6 +8,7 @@
 #  "vp": (float) saturation vapor pressure, Pa
 #  "T_vp": (float) temperature of saturation vapor pressure recording, K
 #  "dH": (float) heat of vaporization, J mol^-1
+#  "mz": (int) mass to charge channel
 
 "triethylene_glycol":
   "name": 'PEG-3'
@@ -32,11 +33,12 @@
   "dH": 102.1e+3
   "dH_min": 100.6e+3
   "dH_max": 103.6e+3
+  'mz': 283
 
 "butenedial":
   name: "Butenedial"
   Dg: 8.556e-6
-  M: 0.1201
+  mw: 0.1201
   rho: 1060
   cinf: 0
   vp_dry: 0.0994
@@ -44,32 +46,48 @@
   dH: 77100.0
   dH_max: 77500.0
   dH_min: 76700.0
+  mz: 85
+
+"pyrrolinone":
+  "name": 'Pyrrolinone'
+  "D_g": 0
+  "M": 0
+  "rho": 0
+  "c_inf": 0
+  "vp": 0
+  "T_vp": 0
+  "dH": 0
+  mz: 84
 
 sodium_chloride:
   name: "NaCl"
   Dg: 0
-  M: 0.05844
+  mw: 0.05844
   rho: 2160.0
   cinf: 0
   vp: 0
   vp_min: 0
   vp_max: 0
-  dH: 102.1e+3
-  dH_min: 100.6e+3
-  dH_max: 103.6e+3
 
 sodium_sulfate:
   name: "Na2SO4"
   Dg: 0
-  M: 0.142
+  mw: 0.142
   rho: 2660.0
   cinf: 0
   vp: 0
   vp_min: 0
   vp_max: 0
-  dH: 102.1e+3
-  dH_min: 100.6e+3
-  dH_max: 103.6e+3
+
+ammonium_sulfate:
+  name: "NH42SO4"
+  Dg: 0
+  mw: 0.1321
+  rho: 1770.0
+  cinf: 0
+  vp: 0
+  vp_min: 0
+  vp_max: 0
 
 "water":
   "name": 'H2O'
