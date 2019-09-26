@@ -34,3 +34,16 @@ def perform_bootstrap(dataset):
         samples[tick] = get_bootstrap_sample(dataset)
 
     return samples
+
+
+def get_bootstrapped_statistics(data):
+    """"""
+
+    samples = perform_bootstrap(data)
+    sample_means = np.mean(samples, axis=0)
+    sample_avg = np.mean(sample_means)
+    sample_std = np.std(sample_means)
+
+    sample_rel_std = sample_std / sample_avg
+
+    return sample_avg, sample_rel_std
