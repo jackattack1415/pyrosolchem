@@ -13,7 +13,7 @@ def process_ms_data_in_evap_experiments(cleaned_ms_file_name, experiments_dict, 
                                 directory=experiment_name)
     df_processed = df_cleaned.copy(deep=True)
     df_processed = add_calibrated_ms_data_columns(df=df_processed,
-                                                  experiments=experiments_dict,
+                                                  experiments_dict=experiments_dict,
                                                   analyte='Butenedial',
                                                   internal_standard='PEG-6')
 
