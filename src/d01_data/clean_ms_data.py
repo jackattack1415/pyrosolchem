@@ -8,7 +8,7 @@ def filter_and_clean_data(ms_file_name, experiment_dict, save_cleaned_data=False
 
     experiment_name = [*experiment_dict].pop()
     df_imported = import_ms_data(file_name=ms_file_name,
-                                 directory=experiment_name)
+                                 directory=None)
 
     df_filtered = filter_ms_data_in_experiments(df=df_imported,
                                                 experiment_parameters=experiment_dict)
