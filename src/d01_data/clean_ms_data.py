@@ -3,21 +3,22 @@ import pandas as pd
 from src.d00_utils.data_utils import import_ms_data, save_data_frame
 
 
-def filter_and_clean_data(ms_file_name, experiment_parameters, save_cleaned_data=False):
+def filter_and_clean_data(ms_file_name, experiment_dict, save_cleaned_data=False):
     """"""
 
+    experiment_name = [*experiment_dict].pop()
     df_imported = import_ms_data(file_name=ms_file_name,
-                                 directory=None)
+                                 directory=experiment_name)
 
     df_filtered = filter_ms_data_in_experiments(df=df_imported,
-                                                experiment_parameters=experiment_parameters)
+                                                experiment_parameters=experiment_dict)
 
     df_cleaned = clean_ms_data_in_experiments(df=df_filtered,
-                                              experiment_parameters=experiment_parameters)
+                                              experiment_parameters=experiment_dict)
 
     if save_cleaned_data:
         save_data_frame(df_to_save=df_cleaned,
-                        raw_data_file_name=ms_file_name,
+                        experiment_label=experiment_name,
                         level_of_cleaning='CLEANED')
 
     return df_cleaned
