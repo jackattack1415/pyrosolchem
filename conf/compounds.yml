@@ -37,12 +37,13 @@
 
 "butenedial":
   name: "Butenedial"
-  Dg: 8.556e-6
+  D_g: 8.556e-6
   mw: 0.1201
   rho: 1060
-  cinf: 0
-  vp_dry: 0.0994
-  vp_wet: 0.121
+  c_inf: 0
+#  vp_dry: 0.0994
+  vp: 0.0342
+  "T_vp": 298
   dH: 77100.0
   dH_max: 77500.0
   dH_min: 76700.0
@@ -58,6 +59,17 @@
   "T_vp": 0
   "dH": 0
   mz: 84
+
+"diazepine":
+  "name": 'Diazepine'
+  "D_g": 0
+  "M": 0
+  "rho": 0
+  "c_inf": 0
+  "vp": 0
+  "T_vp": 0
+  "dH": 0
+  mz: 149
 
 sodium_chloride:
   name: "NaCl"
