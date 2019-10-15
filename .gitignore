@@ -1,3 +1,14 @@
+# ignore all local configuration
+conf/**
+data/**
+results/**
+old/**
+.worktrees
+
+# also keep all .gitkeep files
+!.gitkeep
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
