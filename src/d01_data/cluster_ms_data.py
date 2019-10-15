@@ -22,7 +22,7 @@ def create_clustered_statistics_dataframe(experiment_dict, col_to_cluster, y_col
     processed_data_file_name = experiment_dict[experiment_name]['paths']['processed_data']
 
     df_processed = import_ms_data(file_name=processed_data_file_name,
-                                  directory=experiment_name)
+                                  subdirectory=experiment_name)
 
     cols_to_keep = y_cols_to_keep
     cols_to_keep.append(col_to_cluster)
