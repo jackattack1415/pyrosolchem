@@ -3,18 +3,17 @@ import pandas as pd
 from src.d00_utils.data_utils import import_ms_data, save_data_frame
 
 
-def filter_and_clean_data(ms_file_name, experiment_dict, save_cleaned_data=False):
+def filter_and_clean_data_in_experiment(ms_file_name, experiments_dict, save_cleaned_data=False):
     """"""
 
-    experiment_name = [*experiment_dict].pop()
-    df_imported = import_ms_data(file_name=ms_file_name,
-                                 directory=None)
+    experiment_name = [*experiments_dict].pop()
+    df_imported = import_ms_data(file_name=ms_file_name)
 
-    df_filtered = filter_ms_data_in_experiments(df=df_imported,
-                                                experiment_parameters=experiment_dict)
+    df_filtered = filter_ms_data_in_experiment(df=df_imported,
+                                               processing_parameters=experiments_dict[experiment_name]['processing'])
 
-    df_cleaned = clean_ms_data_in_experiments(df=df_filtered,
-                                              experiment_parameters=experiment_dict)
+    df_cleaned = clean_ms_data_in_experiment(df=df_filtered,
+                                             processing_parameters=experiments_dict[experiment_name]['processing'])
 
     if save_cleaned_data:
         save_data_frame(df_to_save=df_cleaned,
@@ -24,36 +23,32 @@ def filter_and_clean_data(ms_file_name, experiment_dict, save_cleaned_data=False
     return df_cleaned
 
 
-def filter_ms_data_in_experiments(df, experiment_parameters):
+def filter_ms_data_in_experiment(df, processing_parameters):
     """
     """
 
-    df_filtered = pd.DataFrame()
-    for experiment_name, experiment in experiment_parameters.items():
-        query_parts = []
-        if experiment['trap_time']:
-            query_parts.append("trapped>={} and trapped<{}".format(*experiment['trap_time']))
+    query_parts = []
+    if processing_parameters['trap_time']:
+        query_parts.append("trapped>={} and trapped<{}".format(*processing_parameters['trap_time']))
 
-        if experiment['other_query']:
-            query_parts.append(experiment['other_query'])
+    if processing_parameters['other_query']:
+        query_parts.append(processing_parameters['other_query'])
 
-        query = " and ".join(query_parts)
+    query = " and ".join(query_parts)
 
-        if experiment['idx_range']:
-            df_experiment = (df.query(query).loc[experiment['idx_range'][0]:experiment['idx_range'][1]])
-        else:
-            df_experiment = (df.query(query))
+    if processing_parameters['idx_range']:
+        df_filtered = (df.query(query).loc[
+                       processing_parameters['idx_range'][0]:processing_parameters['idx_range'][1]])
+    else:
+        df_filtered = (df.query(query))
 
-        if experiment['bad_idx']:
-            df_experiment = df_experiment.drop(experiment['bad_idx'])
-
-        df_experiment = df_experiment.assign(experiment=experiment_name)
-        df_filtered = df_filtered.append(df_experiment)
+    if processing_parameters['bad_idx']:
+        df_filtered = df_filtered.drop(processing_parameters['bad_idx'])
 
     return df_filtered
 
 
-def clean_ms_data_in_experiments(df, experiment_parameters):
+def clean_ms_data_in_experiment(df, processing_parameters):
     """
     """
 
@@ -61,10 +56,8 @@ def clean_ms_data_in_experiments(df, experiment_parameters):
 
     df_cleaned = pd.DataFrame()
 
-    for name, experiment in experiment_parameters.items():
-        experiment_cleaned = df[df.experiment == name][experiment['columns_to_keep']]
-
-        df_cleaned = df_cleaned.append(experiment_cleaned)
+    experiment_cleaned = df[processing_parameters['columns_to_keep']]
+    df_cleaned = df_cleaned.append(experiment_cleaned)
 
     df_cleaned = df_cleaned.rename(columns={'trapped': 'mins', 'comp': 'solution_name'})
 
