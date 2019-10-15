@@ -1,3 +1,5 @@
+import pandas as pd
+
 from src.d00_utils.calc_utils import *
 from src.d00_utils.flux_utils import (gas_particle_partition, pack_partition_dict)
 from src.d00_utils.diff_utils import differentiate
@@ -34,7 +36,7 @@ def evaporate(compounds, water, params):
                            function_params_dict=gp_dict,
                            n_inits=n_inits,
                            N_step=params['number_of_steps'],
-                           step=params['step_size'])
+                           step=1)
 
     # inclusion of water is necessary to get the radius out
     wet_cmpds, ns_all = add_water_to_droplet(compounds=compounds,
@@ -49,9 +51,19 @@ def evaporate(compounds, water, params):
                                            ns=ns_all[tick])
         rs[tick] = convert_volume_to_radius(V=Vs[tick])
 
-    ts = np.arange(0, params['step_size']*params['number_of_steps'], params['step_size'])
+    ts = np.arange(0, params['number_of_steps'], 1)
 
-    return ns_dry, rs, Vs, ts
+    df = pd.DataFrame()
+    df['secs'] = ts
+    df['radius_m'] = rs
+    df['volume_m3'] = Vs
+
+    compound_names = list(compounds.keys())
+    for tick in range(ns_dry.shape[1]):
+        col_name = 'n_' + compound_names[tick]
+        df[col_name] = ns_dry[:, tick]
+
+    return df
 
 
 def add_water_to_droplet(compounds, water, ns_dry, x_water=0):
