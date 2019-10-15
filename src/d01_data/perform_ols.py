@@ -5,10 +5,12 @@ from sklearn.linear_model import LinearRegression
 from src.d00_utils.data_utils import import_ms_data, save_data_frame
 
 
-def create_ordinary_least_squares_data(processed_ms_file_name, x_col_name, y_col_name,
+def create_ordinary_least_squares_data(processed_ms_file_name, experiments_dict, x_col_name, y_col_name,
                                        take_log=False, save_data=False, experiment=None):
 
-    df = import_ms_data(file_name=processed_ms_file_name, directory=None)
+    experiment_name = [*experiments_dict].pop()
+    df = import_ms_data(file_name=processed_ms_file_name,
+                        subdirectory=experiment_name)
 
     if experiment:
         df = df[df.experiment == experiment]
@@ -37,7 +39,7 @@ def create_ordinary_least_squares_data(processed_ms_file_name, x_col_name, y_col
 
     if save_data:
         save_data_frame(df_to_save=df_ols,
-                        raw_data_file_name=processed_ms_file_name.replace('-PROCESSED', ''),
+                        experiment_label=experiment_name,
                         level_of_cleaning='OLS')
 
     return df_ols
