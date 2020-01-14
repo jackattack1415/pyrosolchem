@@ -91,6 +91,46 @@ sodium_sulfate:
   vp_min: 0
   vp_max: 0
 
+sodium_bicarbonate:
+  name: "NaHCO3"
+  Dg: 0
+  mw: 0.08400
+  rho: 2540.0
+  cinf: 0
+  vp: 0
+  vp_min: 0
+  vp_max: 0
+
+sodium_carbonate:
+  name: "Na2CO3"
+  Dg: 0
+  mw: 0.1060
+  rho: 2200.0
+  cinf: 0
+  vp: 0
+  vp_min: 0
+  vp_max: 0
+
+ammonium_chloride:
+  name: "NH4Cl"
+  Dg: 0
+  mw: 0.05349
+  rho: 1530.0
+  cinf: 0
+  vp: 0
+  vp_min: 0
+  vp_max: 0
+
+ammonium_hydroxide:
+  name: "NH4OH"
+  Dg: 0
+  mw: 0.03504
+  rho: 880.0
+  cinf: 0
+  vp: 0
+  vp_min: 0
+  vp_max: 0
+
 ammonium_sulfate:
   name: "NH42SO4"
   Dg: 0

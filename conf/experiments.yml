@@ -46,6 +46,107 @@ bd_rxn_nh42so4_vial:
     p283_cutoff: 30000  # minimum internal standard signal
     columns_to_keep: ['trapped', 'comp', 'vial', 'mz84_mz283', 'mz85_mz283']
 
+
+bd_rxn_nh4oh_buffered_vial:
+  paths:
+    raw_data: '20200114_butenedial_ammonium_buffered.csv'
+    cleaned_data: '20200114_butenedial_ammonium_buffered_CLEANED.csv'
+    processed_data: '20200114_butenedial_ammonium_buffered_PROCESSED.csv'
+
+  experimental:
+    composition:  # in solution, mass fraction
+      Butenedial: 0.08
+      PEG-6: 0.106
+      NH4OH: 0.021 # CHANGE
+      Na2CO3: 0.0913
+      NaHCO3: 0.0507
+
+  processing:
+    solution_name: null
+    bad_idx: null
+    idx_range: null
+    trap_time: null
+    other_query: 'comptype=="bd_9.2_ah_001"'
+    y_col: ['mz84_mz283', 'mz85_mz283', 'mz112_mz283', 'mz122_mz283',
+            'mz132_mz283', 'mz149_mz283', 'mz150_mz283', 'mz168_mz283']
+    p283_cutoff: null
+    columns_to_keep: ['rxn_time', 'comp', 'mz84_mz283', 'mz85_mz283', 'mz112_mz283', 'mz122_mz283',
+                      'mz132_mz283', 'mz149_mz283', 'mz150_mz283', 'mz168_mz283']
+
+
+bd_rxn_nh4cl_buffered_vial:
+  paths:
+    raw_data: '20200114_butenedial_ammonium_buffered.csv'
+    cleaned_data: '20200114_butenedial_ammonium_buffered_CLEANED.csv'
+    processed_data: '20200114_butenedial_ammonium_buffered_PROCESSED.csv'
+
+  experimental:
+    composition:  # in solution, mass fraction
+      Butenedial: 0.08
+      PEG-6: 0.106
+      NH4OH: 0.021 # CHANGE
+      Na2CO3: 0.0913
+      NaHCO3: 0.0507
+
+  processing:
+    solution_name: null
+    bad_idx: null
+    idx_range: null
+    trap_time: null
+    other_query: 'comptype=="bd_9.2_ah_001"'
+    y_col: ['mz84_mz283', 'mz85_mz283', 'mz112_mz283', 'mz122_mz283',
+            'mz132_mz283', 'mz149_mz283', 'mz150_mz283', 'mz168_mz283']
+    p283_cutoff: null
+    columns_to_keep: ['rxn_time', 'comp', 'mz84_mz283', 'mz85_mz283', 'mz112_mz283', 'mz122_mz283',
+                      'mz132_mz283', 'mz149_mz283', 'mz150_mz283', 'mz168_mz283']
+
+
+bd_rxn_nh4oh_vial:
+  paths:
+    raw_data: '190924-butenedial-ammonium-hydroxide-droplets.csv'
+    cleaned_data: '191205-bd_rxn_nh4oh_vial-CLEANED.csv'
+    processed_data: '191205-bd_rxn_nh4oh_vial-PROCESSED.csv'
+
+  experimental:
+    composition:  # in solution, mass fraction
+      Butenedial: 0.75*0.07
+      PEG-6: 0.2
+      NH42SO4: 0.03*3 # CHANGE
+
+  processing:
+    solution_name: null
+    bad_idx: 100
+    idx_range: null
+    trap_time: [0, 10]  # range of trap times used
+    other_query: 'comptype=="bd07hg20as03" and trapped<10 and p283>30000'
+    y_col: 'mz84_mz283'  # column containing the normalized intensities
+    p283_cutoff: 30000  # minimum internal standard signal
+    columns_to_keep: ['trapped', 'comp', 'vial', 'mz84_mz283', 'mz85_mz283']
+
+
+bd_rxn_nh42so4_buffer_vial:
+  paths:
+    raw_data: '191205-butenedial-ammonium-sulfate-buffered.csv'
+    cleaned_data: '191205-bd_rxn_nh4oh_vial-CLEANED.csv'
+    processed_data: '191205-bd_rxn_nh4oh_vial-PROCESSED.csv'
+
+  experimental:
+    composition:  # in solution, mass fraction
+      Butenedial: 0.75*0.07
+      PEG-6: 0.2
+      NH42SO4: 0.03*3 # CHANGE
+
+  processing:
+    solution_name: null
+    bad_idx: 100
+    idx_range: null
+    trap_time: [0, 10]  # range of trap times used
+    other_query: 'comptype=="bd07hg20as03" and trapped<10 and p283>30000'
+    y_col: 'mz84_mz283'  # column containing the normalized intensities
+    p283_cutoff: 30000  # minimum internal standard signal
+    columns_to_keep: ['trapped', 'comp', 'vial', 'mz84_mz283', 'mz85_mz283']
+
+
 bd_rxn_nh42so4_droplet:
   paths:
     raw_data: '190918-butenedial-ammonium-sulfate-droplets.csv'
@@ -123,6 +224,7 @@ bd_evap_dry:
   # plotting parameters
   label: 'BD (dry)'
 
+
 bd_evap_wet:
   paths:
     raw_data: '190918-butenedial-droplets.csv'
@@ -186,6 +288,7 @@ bd_evap_high_nacl:
   # plotting parameters
   label: 'BD + NaCl'
 
+
 bd_evap_low_nacl:
   raw_data_file: '190918-butenedial-droplets.csv'
   # experimental parameters
@@ -214,6 +317,7 @@ bd_evap_low_nacl:
 
   # plotting parameters
   label: 'BD + NaCl'
+
 
 bd_evap_high_na2so4:
   paths:
