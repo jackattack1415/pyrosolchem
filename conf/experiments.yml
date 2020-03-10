@@ -1,5 +1,16 @@
 ## DICTIONARIES OF PARAMETERS BY EXPERIMENT
 
+
+bd_decay:
+  paths:
+    raw_data: '20200220_bd_high_ph_nmr.csv'
+    processed_data: '200225-bd_decay-PROCESSED.csv'
+
+  experimental:
+
+  processing:
+
+
 pyr_evap_nh42so4:
   paths:
     raw_data: '190918-butenedial-ammonium-sulfate-droplets.csv'
@@ -76,7 +87,7 @@ bd_rxn_nh4oh_buffered_vial:
 
 bd_rxn_nh4cl_buffered_vial:
   paths:
-    raw_data: '20200114_butenedial_ammonium_buffered.csv'
+    raw_data: '20200116_butenedial_ammonium_buffered.csv'
     cleaned_data: '20200114_butenedial_ammonium_buffered_CLEANED.csv'
     processed_data: '20200114_butenedial_ammonium_buffered_PROCESSED.csv'
 

@@ -42,7 +42,7 @@ def get_coefficients_with_lmfit(f_residual, params, df, x_col_name, y_col_names)
         ys.append(df[y_col].values)
     ys = np.asarray(ys)
 
-    results = minimize(f_residual, params, args=(xs, ys), method='leastsq')
+    results = minimize(f_residual, params, args=(xs, ys), method='leastsq', nan_policy='omit')
 
     return results.params
 
