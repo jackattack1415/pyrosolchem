@@ -7,6 +7,23 @@ from scipy.constants import pi, R, N_A
 from src.d00_utils.processing_utils import normalize
 
 
+def calculate_molarity_from_weight_fraction(analyte, compounds, solution_comp):
+    """ Converts the (initial) solution composition to an output molarity, assuming dilute aqueous conditions.
+
+    :param analyte: str. String of the analyte for which the molarity is being calculated.
+    :param solution_comp: dict. Dictionary (found usually in expts, for example) containing the solution composition.
+    :return:
+    """
+
+    analyte_wt_frac = solution_comp[analyte]
+    rho_water = 1
+
+    # assume dilute aqueous medium
+    molarity = analyte_wt_frac * rho_water / compounds[analyte]['mw']
+
+    return molarity
+
+
 def convert_molar_abundances_to_mole_fractions(composition, x_water=0):
     """ Calculates mole fractions of compounds in composition knowing the water mole fraction.
 

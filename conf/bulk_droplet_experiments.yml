@@ -4,20 +4,27 @@
 bd07as03_nmr:
   paths:
     raw_data: '20200319_butenedial_ammonium_bulk_nmr.csv'
+    filtered_data: '20200319_bd07as03_nmr_FILTERED.csv'
     processed_data: '20200319_bd07as03_nmr_PROCESSED.csv'
     modeled_data: '20200319_bd07as03_nmr_MODELED.csv'
 
   experimental_conditions:
-    solution_weight_fraction:
-      Butenedial: 0.75*0.7
-      NH42SO4: 0.03*3
+    solution_weight_fractions:
+      butenedial: 0.0525
+      NH42SO4: 0.03
 
   data_treatment:
-    solution_id: 'bd07as03_20200918'
+    solution_id: 'bd07as03_20190918'
     filtering_queries: null
     columns_to_keep: ['MINS_ELAPSED','M_BUTENEDIAL']
-    y_col: 'M_BUTENEDIAL'
-    signal_conversion_function: 'convert_signal_to_molarity'
+    processing_functions: ['calibrate_from_initial_conditions']
+
+    calibration_parameters:
+      analyte: ['butenedial']
+      cols_to_calibrate: ['SIG_BUTENEDIAL_NORM']
+      ys_out: ['M_BUTENEDIAL']
+      calibration_query: 'MINS_ELAPSED < 25'
+      method: 'weight_fraction_to_molarity'
 
   modelling:
     fitting_function: 'f_butenedial_reactive_loss_only'
@@ -25,3 +32,4 @@ bd07as03_nmr:
 
   plotting:
     to_plot: ['observations', 'modelling']
+    y_col: ['M_BUTENEDIAL']

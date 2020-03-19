@@ -1,27 +1,96 @@
 import pandas as pd
+import numpy as np
 
 from src.d00_utils.processing_utils import get_bootstrapped_statistics
-from src.d00_utils.data_utils import extract_calibration_data, save_data_frame, import_ms_data
+from src.d00_utils.calc_utils import calculate_molarity_from_weight_fraction
+from src.d00_utils.data_utils import *
 
 
-def process_data_in_experiment(ms_file_name, experiments_dict, save_processed_data=False):
+def process_data_for_experiments(experiments_dict, compounds, save_processed_data=False):
+    """ Adds columns (processing) while removing unnecessary columns (cleaning) from the dataframe based on
+    function input strings and columns_to_keep, given in the experiments_dict.
+
+    :param experiments_dict: dict. Contains the information necessary for the filtering and the paths.
+    :param compounds: dict. Contains dictionary of compounds in experiments. Required for any calibration.
+    :param save_processed_data: Boolean. Tells you whether to save data in the experiments into the
+    subdirectories of the treated_data directory.
+    """
+
+    experiment_labels = [*experiments_dict]
+
+    for experiment in experiment_labels:
+        filtered_ms_file_name = experiments_dict[experiment]['paths']['filtered_data']
+        df_imported = import_treated_csv_data(file_name=filtered_ms_file_name,
+                                              experiment_label=experiment)
+
+        processing_functions = experiments_dict[experiment]['data_treatment']['processing_functions']
+        df_processed = apply_processing_functions_in_experiment(df_unprocessed=df_imported,
+                                                                experiments_dict=experiments_dict,
+                                                                compounds=compounds,
+                                                                experiment=experiment,
+                                                                processing_function_strings=processing_functions)
+
+        columns_to_keep = experiments_dict[experiment]['data_treatment']['columns_to_keep']
+        df_processed_and_cleaned = df_processed[columns_to_keep]
+
+        if save_processed_data:
+            save_data_frame(df_to_save=df_processed_and_cleaned,
+                            experiment_label=experiment,
+                            level_of_treatment='PROCESSED')
+
+    return
+
+
+def apply_processing_functions_in_experiment(df_unprocessed, experiments_dict, compounds,
+                                             experiment, processing_function_strings):
     """"""
 
-    experiment_name = [*experiments_dict].pop()
-    df_imported = import_ms_data(file_name=ms_file_name)
+    for function_string in processing_function_strings:
 
-    df_filtered = filter_ms_data_in_experiment(df=df_imported,
-                                               processing_parameters=experiments_dict[experiment_name]['processing'])
+        if function_string == 'normalize':
+            df_unprocessed = add_normalized_intensity_column(df=df_unprocessed,
+                                                             internal_std_col='mz283')
 
-    df_cleaned = clean_ms_data_in_experiment(df=df_filtered,
-                                             processing_parameters=experiments_dict[experiment_name]['processing'])
+        if function_string == 'calibrate_from_initial_conditions':
+            calibration_params = experiments_dict[experiment]['data_treatment']['calibration_parameters']
+            solution_weight_fractions = experiments_dict[experiment]['experimental_conditions']['solution_' +
+                                                                                                'weight_fractions']
+            df_unprocessed = add_calibrated_data_column(df=df_unprocessed,
+                                                        calibration_params=calibration_params,
+                                                        compounds=compounds,
+                                                        initial_composition=solution_weight_fractions)
 
-    if save_cleaned_data:
-        save_data_frame(df_to_save=df_cleaned,
-                        experiment_label=experiment_name,
-                        level_of_cleaning='CLEANED')
+    return df_unprocessed
 
-    return df_cleaned
+
+def add_calibrated_data_column(df, calibration_params, compounds, initial_composition):
+    """"""
+
+    df_with_calibrated_data = df
+
+    calibration_query = calibration_params['calibration_query']
+    df_calibrate = df.query(calibration_query)
+
+    vars_to_calibrate = calibration_params['cols_to_calibrate']
+    N_calibrations = len(vars_to_calibrate)
+    for tick in range(N_calibrations):
+        var = vars_to_calibrate[tick]
+        analyte = calibration_params['analyte'][tick]
+        method = calibration_params['method']
+
+        if method == 'weight_fraction_to_molarity':
+            signal_avg = np.mean(df_calibrate[var])
+            molarity = calculate_molarity_from_weight_fraction(analyte=analyte,
+                                                               compounds=compounds,
+                                                               solution_comp=initial_composition)
+
+            calibration_factor = molarity / signal_avg
+
+        y_out_col = calibration_params['ys_out'][tick]
+        df_with_calibrated_data[y_out_col] = calibration_factor * df_with_calibrated_data[var]
+
+    return df_with_calibrated_data
+
 
 
 def process_ms_data_in_evap_experiments(cleaned_ms_file_name, experiments_dict, save_processed_data=False):
@@ -34,11 +103,7 @@ def process_ms_data_in_evap_experiments(cleaned_ms_file_name, experiments_dict, 
     df_cleaned = import_ms_data(file_name=cleaned_ms_file_name,
                                 subdirectory=experiment_name)
     df_processed = df_cleaned.copy(deep=True)
-    df_processed = add_calibrated_ms_data_columns(df=df_processed,
-                                                  processing_params=processing_params,
-                                                  composition=composition,
-                                                  analyte='Butenedial',
-                                                  internal_standard='PEG-6')
+
 
     df_processed = df_processed.rename(columns={'mins': 'hrs'})
     df_processed.hrs = df_processed.hrs / 60
@@ -138,28 +203,6 @@ def add_calibrated_ms_data_columns(df, processing_params, composition, analyte, 
             df_calibrated[decay_data_col] = df_calibrated[cal_data_col] / rel_molar_abundance_in_solution
 
     return df_calibrated
-
-
-def clean_ms_data_in_experiment(df_uncleaned, columns_to_keep):
-    """ Removes columns from the dataframe based on 'columns_to_keep' list in the experiments dictionary from
-    which processing parameters comes.
-
-    :param df_uncleaned: df. Contains the unfiltered dataset.
-    :param columns_to_keep: list. List of the columns to keep, from the experimental parameters.
-    :return: df. Cleaned dataset.
-    """
-
-
-    df = add_normalized_intensity_column(df)  # make this more general eventually to non p283...
-
-    df_cleaned = pd.DataFrame()
-
-    experiment_cleaned = df[processing_parameters['columns_to_keep']]
-    df_cleaned = df_cleaned.append(experiment_cleaned)
-
-    df_cleaned = df_cleaned.rename(columns={'trapped': 'mins', 'comp': 'solution_name'})
-
-    return df_cleaned
 
 
 def add_normalized_intensity_column(df, internal_std_col='p283'):
