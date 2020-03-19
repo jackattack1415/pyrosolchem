@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.d00_utils.data_utils import import_ms_data, save_data_frame
+from src.d00_utils.data_utils import *
 
 
 def filter_raw_data_for_experiments(experiments_dict, save_filtered_data=False):
@@ -12,14 +12,14 @@ def filter_raw_data_for_experiments(experiments_dict, save_filtered_data=False):
     subdirectories of the treated_data directory.
     """
 
-    experiment_labels = [*experiments_dict].pop()
+    experiment_labels = [*experiments_dict]
 
     for experiment in experiment_labels:
-        raw_ms_file_name = experiment_dict[experiment]['paths']['raw_data']
+        raw_ms_file_name = experiments_dict[experiment]['paths']['raw_data']
         df_imported = import_raw_csv_data(file_name=raw_ms_file_name)
 
-        filtering_queries = experiment_dict[experiment]['data_treatment']['filtering_queries']
-        solution_id = experiment_dict[experiment]['data_treatment']['solution_id']
+        filtering_queries = experiments_dict[experiment]['data_treatment']['filtering_queries']
+        solution_id = experiments_dict[experiment]['data_treatment']['solution_id']
 
         df_filtered = filter_ms_data_in_experiment(df_unfiltered=df_imported,
                                                    filtering_queries=filtering_queries,
@@ -27,8 +27,8 @@ def filter_raw_data_for_experiments(experiments_dict, save_filtered_data=False):
 
         if save_filtered_data:
             save_data_frame(df_to_save=df_filtered,
-                            experiment_label=experiment_name,
-                            level_of_cleaning='FILTERED')
+                            experiment_label=experiment,
+                            level_of_treatment='FILTERED')
 
     return
 
@@ -43,9 +43,9 @@ def filter_ms_data_in_experiment(df_unfiltered, filtering_queries, solution_id):
     :return: df. Filtered dataset.
     """
 
-    df_filtered = df_unfiltered[SOLUTION_ID == solution_id]
+    df_filtered = df_unfiltered[df_unfiltered.SOLUTION_ID == solution_id]
 
-    if filtering_queries is not null:
+    if filtering_queries:
 
         query_parts = []
         if processing_parameters['trap_time']:
@@ -64,10 +64,5 @@ def filter_ms_data_in_experiment(df_unfiltered, filtering_queries, solution_id):
 
         if processing_parameters['bad_idx']:
             df_filtered = df_filtered.drop(processing_parameters['bad_idx'])
-
-    if save_cleaned_data:
-        save_data_frame(df_to_save=df_filtered,
-                        experiment_label=experiment_name,
-                        level_of_cleaning='FILTERED')
 
     return df_filtered

@@ -54,7 +54,7 @@ def save_data_frame(df_to_save, experiment_label, level_of_treatment):
 
     project_dir = get_project_directory()
     today_str = date.today().strftime("%Y%m%d")
-    file_dir = os.path.join(project_dir, 'data', experiment_label)
+    file_dir = os.path.join(project_dir, 'data_treated', experiment_label)
 
     if not os.path.exists(file_dir):
         os.mkdir(file_dir)
