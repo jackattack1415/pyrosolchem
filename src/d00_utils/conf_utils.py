@@ -49,7 +49,7 @@ def load_experiments(file_name, experiment_names=None):
     """ Returns experimental parameters for experiment names of choice.
 
         :param file_name: str. Only the file name (not the path) of the yml file, located in conf folder.
-        :param experiments_names: list. List of the experiment names to be loaded. None grabs all experiments.
+        :param experiment_names: list. List of the experiment names to be loaded. None grabs all experiments.
         :return: dict. Contains the dict embedded in the yml of the file name selected.
     """
 
