@@ -16,7 +16,7 @@ def filter_raw_data_for_experiments(experiments_dict, save_filtered_data=False):
 
     for experiment in experiment_labels:
         raw_ms_file_name = experiment_dict[experiment]['paths']['raw_data']
-        df_imported = import_raw_ms_data(file_name=raw_ms_file_name)
+        df_imported = import_raw_csv_data(file_name=raw_ms_file_name)
 
         filtering_queries = experiment_dict[experiment]['data_treatment']['filtering_queries']
         solution_id = experiment_dict[experiment]['data_treatment']['solution_id']
