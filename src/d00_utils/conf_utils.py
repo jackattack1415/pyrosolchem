@@ -4,9 +4,8 @@ import ruamel.yaml
 
 def get_project_directory():
     """ Returns project directory.
-        Outputs
-        ---
-        project_directory (str): path back to top level directory
+
+        :return: str. path back to top level directory
     """
 
     project_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
@@ -15,10 +14,9 @@ def get_project_directory():
 
 
 def load_compounds():
-    """ Returns components as a dictionary.
-        Outputs
-        ---
-        components (dict): definitions of components in solution.
+    """ Returns compounds as two dictionaries, split into water and other chemical compounds.
+
+        :return: dict. definitions of components in solution.
     """
 
     project_directory = get_project_directory()
@@ -47,13 +45,17 @@ def load_constants():
     return constants
 
 
-def load_experiments(experiment_names=None):
+def load_experiments(file_name, experiment_names=None):
     """ Returns experimental parameters for experiment names of choice.
+
+        :param file_name: str. Only the file name (not the path) of the yml file, located in conf folder.
+        :param experiments_names: list. List of the experiment names to be loaded. None grabs all experiments.
+        :return: dict. Contains the dict embedded in the yml of the file name selected.
     """
 
     project_directory = get_project_directory()
-    filepath = os.path.join(project_directory, 'conf', 'experiments.yml')
-    with open(filepath) as f:
+    file_path = os.path.join(project_directory, 'conf', file_name)
+    with open(file_path) as f:
         experiments = ruamel.yaml.safe_load(f)
 
     if experiment_names is None:
@@ -62,18 +64,3 @@ def load_experiments(experiment_names=None):
         experiments = dict((exp, experiments[exp]) for exp in experiment_names)
 
     return experiments
-
-
-def load_paths():
-    """ Returns constants.
-        Outputs
-        ---
-        project_directory (str): path back to top level directory
-    """
-
-    project_directory = get_project_directory()
-    filepath = os.path.join(project_directory, 'conf', 'paths.yml')
-    with open(filepath) as f:
-        paths = ruamel.yaml.safe_load(f)
-
-    return paths
