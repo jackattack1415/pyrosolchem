@@ -4,9 +4,10 @@
 bd07as03_nmr:
   paths:
     raw_data: '20200319_butenedial_ammonium_bulk_nmr.csv'
-    filtered_data: '20200319_bd07as03_nmr_FILTERED.csv'
-    processed_data: '20200319_bd07as03_nmr_PROCESSED.csv'
-    modeled_data: '20200319_bd07as03_nmr_MODELED.csv'
+    filtered_data: '20200320_bd07as03_nmr_FILTERED.csv'
+    processed_data: '20200320_bd07as03_nmr_PROCESSED.csv'
+    modeled_data: '20200320_bd07as03_nmr_LMFIT.csv'
+    model_parameters_data: '20200320_bd07as03_nmr_LMFIT_PARAMS.csv'
 
   experimental_conditions:
     solution_weight_fractions:

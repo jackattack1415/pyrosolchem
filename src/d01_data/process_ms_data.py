@@ -19,8 +19,8 @@ def process_data_for_experiments(experiments_dict, compounds, save_processed_dat
     experiment_labels = [*experiments_dict]
 
     for experiment in experiment_labels:
-        filtered_ms_file_name = experiments_dict[experiment]['paths']['filtered_data']
-        df_imported = import_treated_csv_data(file_name=filtered_ms_file_name,
+        filtered_file_name = experiments_dict[experiment]['paths']['filtered_data']
+        df_imported = import_treated_csv_data(file_name=filtered_file_name,
                                               experiment_label=experiment)
 
         processing_functions = experiments_dict[experiment]['data_treatment']['processing_functions']
