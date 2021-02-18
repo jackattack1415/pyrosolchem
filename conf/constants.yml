@@ -1,7 +1,7 @@
 ## GLOBAL CONSTANTS
 # spring point
 geom_const: 2.83e-3 # from 170529-springpoint-numerical.ipynb
-mu: 1.846e-5 # gas viscocity air at 300 K, kg m^-1 s^-1
+mu: 1.846e-5 # gas viscosity air at 300 K, kg m^-1 s^-1
 kappa: 1 # stokes law correction for nonspherical particle
 
 rgn2_a:

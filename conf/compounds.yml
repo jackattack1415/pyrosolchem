@@ -141,6 +141,13 @@ ammonium_sulfate:
   vp_min: 0
   vp_max: 0
 
+dimethyl_sulfone:
+  name: "DMS"
+  mw: 0.09413
+  rho: 1450
+  nmr_peak: 3.14
+  protons_in_nmr_peak: 6
+
 "water":
   "name": 'H2O'
   "D_g": 2.08e-5 # at T = 20 deg C
