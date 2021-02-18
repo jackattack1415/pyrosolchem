@@ -4,7 +4,7 @@ old/data/**
 results/**
 old/**
 .worktrees
-noteboooks/**
+notebooks/**
 
 # also keep all .gitkeep files
 !.gitkeep
