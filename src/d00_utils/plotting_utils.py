@@ -1,6 +1,10 @@
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+from datetime import date
+
+from src.d00_utils.conf_utils import get_project_directory
 
 
 def plot_ms_data(df_data, x_data_col, y_data_cols,
@@ -36,10 +40,10 @@ def plot_ms_data(df_data, x_data_col, y_data_cols,
                         color=series_colors[tick], label='%s (clustered)' % series_labels[tick])
 
             ax.scatter(xs, ys, label='%s (observed)' % series_labels[tick], color=series_colors[tick],
-                       s=200, alpha=0.2, edgecolor='black')
+                       s=60, alpha=0.2)
         else:
             ax.scatter(xs, ys, label='%s' % series_labels[tick], color=series_colors[tick],
-                       s=200, alpha=1, edgecolor='black')
+                       s=60, alpha=1)
 
         if df_model is not None:
             xs_model = df_model[x_model_col]
@@ -76,6 +80,10 @@ def get_plot_limits(df_data, x_data_col, y_data_cols,
     return x_max, y_max
 
 
-def format_plot():
+def create_fig_path(plot_name):
+    project_dir = get_project_directory()
+    today_str = date.today().strftime("%Y%m%d")
+    file_name = today_str + '_' + plot_name + '.png'
+    file_path = os.path.join(project_dir, 'results', 'figs_out', file_name)
 
-    return ax
+    return file_path
