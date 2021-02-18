@@ -1,6 +1,6 @@
 # ignore all local configuration
 conf/**
-data/**
+old/data/**
 results/**
 old/**
 .worktrees
