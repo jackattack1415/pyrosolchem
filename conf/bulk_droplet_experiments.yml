@@ -1,13 +1,13 @@
 ## DICTIONARIES OF PARAMETERS BY EXPERIMENT FOR A PARTICULAR SET OF STUDIES
 # Contains paths to datasets as well as parameters used in the processing of those datasets
 
-bd07as03_nmr:
+bd07as03_bulk_nmr:
   paths:
     raw_data: '20200319_butenedial_ammonium_bulk_nmr.csv'
-    filtered_data: '20200320_bd07as03_nmr_FILTERED.csv'
-    processed_data: '20200320_bd07as03_nmr_PROCESSED.csv'
-    modeled_data: '20200320_bd07as03_nmr_LMFIT.csv'
-    model_parameters_data: '20200320_bd07as03_nmr_LMFIT_PARAMS.csv'
+    filtered_data: '20200622_bd07as03_bulk_nmr_FILTERED.csv'
+    processed_data: '20200622_bd07as03_bulk_nmr_PROCESSED.csv'
+    modeled_data: '20200622_bd07as03_bulk_nmr_LMFIT.csv'
+    model_parameters_data: '20200622_bd07as03_bulk_nmr_LMFIT_PARAMS.csv'
 
   experimental_conditions:
     solution_weight_fractions:
@@ -15,10 +15,13 @@ bd07as03_nmr:
       NH42SO4: 0.03
 
   data_treatment:
-    solution_id: 'bd07as03_20190918'
+    solution_id: ['bd07as03_20190918']
     filtering_queries: null
-    columns_to_keep: ['MINS_ELAPSED','M_BUTENEDIAL']
-    processing_functions: ['calibrate_from_initial_conditions']
+    rows_to_remove: null
+    row_range_to_keep: null
+    columns_to_keep: ['MINS_ELAPSED', 'M_BUTENEDIAL', 'pH']
+    pH_indicator: 'acetic_acid'
+    processing_functions: ['calculate_pH', 'calibrate_from_initial_conditions']
 
     calibration_parameters:
       analyte: ['butenedial']
@@ -34,3 +37,189 @@ bd07as03_nmr:
   plotting:
     to_plot: ['observations', 'modelling']
     y_col: ['M_BUTENEDIAL']
+
+
+bd07as03_bulk_ms:
+  paths:
+    raw_data: '20200324_butenedial_ammonium_ms.csv'
+    filtered_data: '20200324_bd07as03_bulk_ms_FILTERED.csv'
+    processed_data: '20200324_bd07as03_bulk_ms_PROCESSED.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.0525
+      PEG-6: 0.2
+      NH42SO4: 0.03
+
+  data_treatment:
+    solution_id: ['bd07hg20as03'] # requires several solutions
+    rows_to_remove: null
+    row_range_to_keep: null
+    filtering_queries: 'MINS_ELAPSED<10 and MZ283>30000'
+    columns_to_keep: ['MINS_ELAPSED', 'MZ84_MZ283', 'MZ85_MZ283']
+    processing_functions: ['normalize']
+
+  plotting:
+    to_plot: ['observations']
+    y_col: ['MZ84_MZ283']
+
+
+bd07as03_edb_ms:
+  paths:
+    raw_data: '20200324_butenedial_ammonium_ms.csv'
+    filtered_data: '20200324_bd07as03_edb_ms_FILTERED.csv'
+    processed_data: '20200324_bd07as03_edb_ms_PROCESSED.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.0525
+      PEG-6: 0.2
+      NH42SO4: 0.03
+
+  data_treatment:
+    solution_id: ['bd07hg20as03'] # requires several solutions
+    rows_to_remove: null
+    row_range_to_keep: null
+    filtering_queries: 'MINS_VIAL<10'
+    columns_to_keep: ['MINS_ELAPSED', 'MZ84_MZ283','MZ85_MZ283']
+    processing_functions: ['normalize']
+
+  plotting:
+    to_plot: ['observations']
+    y_col: ['MZ84_MZ283']
+
+
+bd10agxx_edb_ms:
+  paths:
+    raw_data: '20200324_butenedial_ammonia_gas_ms.csv'
+    filtered_data: '20210203_bd10agxx_edb_ms_FILTERED.csv'
+    processed_data: '20210203_bd10agxx_edb_ms_PROCESSED.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.11
+      PEG-6: 0.15
+    x_water: 0.75
+
+  data_treatment:
+    solution_id: ['bd10hg20_003', 'butenedial-peg6-181018', 'butenedial-peg6-181016']
+    rows_to_remove: null
+    row_range_to_keep: null
+    filtering_queries: 'MZ283>10000 and mM_AMMONIA_BUBBLER <= 14.5 and mM_AMMONIA_BUBBLER > 0'
+    columns_to_keep: ['SOLUTION_ID', 'MINS_ELAPSED', 'MZ84_MZ283', 'MZ85_MZ283', 'MZ150_MZ283',
+                      'MZ168_MZ283', 'M_AMMONIA', 'PPM_AMMONIA']
+    processing_functions: ['normalize', 'calculate_ammonia_from_bubbler']
+
+
+bd10ag30_edb_ms:
+  paths:
+    raw_data: '20200324_butenedial_ammonia_gas_ms.csv'
+    filtered_data: '20210120_bd10ag30_edb_ms_FILTERED.csv'
+    processed_data: '20210120_bd10ag30_edb_ms_PROCESSED.csv'
+    clustered_data: '20210120_bd10ag30_edb_ms_CLUSTERED.csv'
+    predicted_data: '20210120_bd10ag30_edb_ms_PREDICTED.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.075
+      PEG-6: 0.15
+    x_water: 0.75
+
+  data_treatment:
+    solution_id: null
+    rows_to_remove: null
+    row_range_to_keep: null
+    filtering_queries: 'MZ283>10000 and mM_AMMONIA_BUBBLER==0.29'
+    columns_to_keep: ['MINS_ELAPSED', 'MZ84_MZ283', 'MZ85_MZ283', 'MZ149_MZ283', 'MZ150_MZ283', 'MZ168_MZ283',
+                      'M_AMMONIA', 'PPM_AMMONIA']
+    processing_functions: ['normalize', 'calculate_ammonia_from_bubbler']
+
+
+bd07as03_pr_edb_ms:
+  paths:
+    raw_data: '20200324_butenedial_ammonium_ms.csv'
+    filtered_data: '20200326_bd07as03_pr_edb_ms_FILTERED.csv'
+    processed_data: '20200326_bd07as03_pr_edb_ms_PROCESSED.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.0525
+      PEG-6: 0.2
+      NH42SO4: 0.03
+
+  data_treatment:
+    solution_id: ['SOLUTION_ID'] # requires several solutions
+    rows_to_remove: null
+    row_range_to_keep: [50, 74]
+    filtering_queries: 'MZ283>5000 and MINS_TRAPPED<500'
+    columns_to_keep: ['trapped', 'SOLUTION_ID', 'MZ84_MZ283', 'MZ85_MZ283']
+    processing_functions: ['normalize']
+
+
+bd07as03_bd_edb_ms:
+  paths:
+    raw_data: '20200324_butenedial_ammonium_ms.csv'
+    filtered_data: '20200511_bd07as03_bd_edb_ms_FILTERED.csv'
+    processed_data: '20200511_bd07as03_bd_edb_ms_PROCESSED.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.0525
+      PEG-6: 0.2
+      NH42SO4: 0.03
+
+  data_treatment:
+    solution_id: ['SOLUTION_ID'] # requires several solutions
+    rows_to_remove: null
+    row_range_to_keep: [50, 74]
+    filtering_queries: 'MINS_VIAL>800 and MZ283>5000 and MINS_TRAPPED<500'
+    columns_to_keep: ['MINS_TRAPPED', 'SOLUTION_ID', 'MZ84_MZ283', 'MZ85_MZ283']
+    processing_functions: ['normalize']
+
+
+bd10ss10_edb_ms:
+  paths:
+    raw_data: '20200324_butenedial_edb_ms.csv'
+    filtered_data: '20200326_bd10ss10_edb_ms_FILTERED.csv'
+    processed_data: '20200326_bd10ss10_edb_ms_PROCESSED.csv'
+    clustered_data: '20200326_bd10ss10_edb_ms_CLUSTERED.csv'
+    modeled_data: '20200326_bd10ss10_edb_ms_LMFIT.csv'
+    model_parameters_data: '20200326_bd10ss10_edb_ms_LMFIT_PARAMS.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.075
+      PEG-6: 0.1
+      Na2SO4: 0.1
+    RH: 0.75
+
+  data_treatment:
+    solution_id: ['bd10hg10ss10_001']
+    rows_to_remove: [83, 84, 85, 86]
+    row_range_to_keep: [16, 125]
+    filtering_queries: 'rh>50 and MINS_ELAPSED<160'
+    columns_to_keep: ['MINS_ELAPSED', 'MZ85_MZ283']
+    processing_functions: ['normalize']
+
+bd_edb_ms:
+  paths:
+    raw_data: '20200324_butenedial_edb_ms.csv'
+    filtered_data: '20200603_bd_edb_ms_FILTERED.csv'
+    processed_data: '20200603_bd_edb_ms_PROCESSED.csv'
+    clustered_data: '20200603_bd_edb_ms_CLUSTERED.csv'
+    modeled_data: '20200603_bd_edb_ms_LMFIT.csv'
+    model_parameters_data: '20200603_bd_edb_ms_LMFIT_PARAMS.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.075
+      PEG-6: 0.2
+    RH: 0.75
+
+  data_treatment:
+    solution_id: ['bd10hg20_002']
+    rows_to_remove: null
+    row_range_to_keep: [0, 500]
+    filtering_queries: '(rh>50 and MINS_ELAPSED<300 and MINS_ELAPSED>2) or (MINS_ELAPSED<5 and MINS_ELAPSED>2)'
+    columns_to_keep: ['MINS_ELAPSED', 'MZ85_MZ283']
+    processing_functions: ['normalize']

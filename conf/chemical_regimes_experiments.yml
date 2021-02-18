@@ -1,0 +1,284 @@
+## DICTIONARIES OF PARAMETERS BY EXPERIMENT FOR A PARTICULAR SET OF STUDIES
+# Contains paths to datasets as well as parameters used in the processing of those datasets
+
+bdahph9_nmr:
+  paths:
+    raw_data: '20200319_butenedial_ammonium_bulk_nmr.csv'
+    filtered_data: '20210125_bdahph9_nmr_FILTERED.csv'
+    processed_data: '20210125_bdahph9_nmr_PROCESSED.csv'
+    predicted_data: '20210208_bdahph9_nmr_PREDICTED.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.095
+      NH4OH: 0.00736
+      DMS: 0.0129
+      NaHCO3: 0.080
+      Na2CO3: 0.0097
+
+  data_treatment:
+    solution_id: ['bd_ph9.2_ah_001']
+    filtering_queries: null
+    rows_to_remove: null
+    row_range_to_keep: null
+    columns_to_keep: ['MINS_ELAPSED', 'pH', 'M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER', 'M_DIAZEPINE']
+    pH_indicator: 'methyl_phosphonic_acid'
+    processing_functions: ['calculate_pH', 'calibrate_with_internal_standard']
+
+    calibration_parameters:
+      cols_to_calibrate: ['SIG_BUTENEDIAL_NORM', 'SIG_SHIFT_1', 'SIG_SHIFT_2', 'SIG_SHIFT_4']
+      ys_out: ['M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER', 'M_DIAZEPINE']
+      method: 'signal_to_molarity'
+      internal_standard: 'dimethyl_sulfone'
+
+  modelling:
+    fitting_function: 'f_butenedial_reactive_loss_only'
+    uncertainty_analysis: True
+
+  plotting:
+    to_plot: ['observations', 'modelling']
+    y_col: ['M_BUTENEDIAL']
+
+bdasph9_nmr:
+  paths:
+    raw_data: '20200319_butenedial_ammonium_bulk_nmr.csv'
+    filtered_data: '20210125_bdasph9_nmr_FILTERED.csv'
+    processed_data: '20210125_bdasph9_nmr_PROCESSED.csv'
+    clustered_data: '20210203_bdasph9_nmr_CLUSTERED.csv'
+    modeled_data: '20210125_bdasph9_nmr_LMFIT.csv'
+    model_parameters_data: '20210125_bdasph9_nmr_LMFIT_PARAMS.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.080
+      NH42SO4: 0.060
+      DMS: 0.0096
+      NaHCO3: 0.0449
+      Na2CO3: 0.0062
+
+  data_treatment:
+    solution_id: ['bd_ph9.2_as_004']
+    filtering_queries: #'SIG_SHIFT_8 < 10'  # hacky work around for getting rid of possible NAs
+    rows_to_remove: null
+    row_range_to_keep: null
+    columns_to_keep: ['MINS_ELAPSED', 'pH', 'H_PLUS', 'M_BUTENEDIAL', 'M_DIMER', 'M_DIAZEPINE',
+                      'M_C4H5NO']
+    pH_indicator: 'acetic_acid'
+    nh_source: 'ammonium_sulfate'
+    processing_functions: ['calculate_pH', 'calibrate_with_internal_standard', 'calculate_nh']
+
+    calibration_parameters:
+      cols_to_calibrate: ['SIG_BUTENEDIAL_NORM', 'SIG_SHIFT_3',
+                          'SIG_SHIFT_11', 'SIG_SHIFT_1', 'SIG_SHIFT_6']
+      ys_out: ['M_BUTENEDIAL', 'M_DIMER',
+               'M_DIAZEPINE', 'M_C4H5NO', 'M_POLYMER']
+      method: 'signal_to_molarity'
+      internal_standard: 'dimethyl_sulfone'
+
+  plotting:
+    to_plot: ['observations', 'modelling']
+    y_col: ['M_BUTENEDIAL']
+
+bd07as03_bulk_nmr:
+  paths:
+    raw_data: '20200319_butenedial_ammonium_bulk_nmr.csv'
+    filtered_data: '20210125_bd07as03_bulk_nmr_FILTERED.csv'
+    processed_data: '20210125_bd07as03_bulk_nmr_PROCESSED.csv'
+    modeled_data: '20210125_bd07as03_bulk_nmr_LMFIT.csv'
+    predicted_data: '20210125_bd07as03_bulk_nmr_PREDICTED.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.0525
+      NH42SO4: 0.03
+
+  data_treatment:
+    solution_id: ['bd07as03_20190918']
+    filtering_queries: null
+    rows_to_remove: null
+    row_range_to_keep: null
+    columns_to_keep: ['MINS_ELAPSED', 'M_BUTENEDIAL', 'pH']
+    pH_indicator: 'acetic_acid'
+    processing_functions: ['calculate_pH', 'calibrate_from_initial_conditions']
+
+    calibration_parameters:
+      analyte: ['butenedial']
+      cols_to_calibrate: ['SIG_BUTENEDIAL_NORM']
+      ys_out: ['M_BUTENEDIAL']
+      calibration_query: 'MINS_ELAPSED < 25'
+      method: 'weight_fraction_to_molarity'
+
+  modelling:
+    fitting_function: 'f_butenedial_reactive_loss_only'
+    uncertainty_analysis: True
+
+  plotting:
+    to_plot: ['observations', 'modelling']
+    y_col: ['M_BUTENEDIAL']
+
+bdoh_nmr:
+  paths:
+    raw_data: '20200622_butenedial_decay_nmr.csv'
+    filtered_data: '20210124_bdoh_nmr_FILTERED.csv'
+    processed_data: '20210125_bdoh_nmr_PROCESSED.csv'
+    modeled_data: '20210125_bdoh_nmr_LMFIT.csv'
+    model_parameters_data: '20210125_bdoh_nmr_LMFIT_PARAMS.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.02
+      DMS: 0.0108
+      NaHCO3: 0.0426
+      Na2CO3: 0.0588
+      MPA: 0.0022
+
+  data_treatment:
+    solution_id: ['bd_ph10_d2o_002']
+    filtering_queries: null #'SIG_MONOSUB_ALCOHOL_PROTON_TOTAL < 10' # and MINS_ELAPSED < 400'  # hacky way to remove phca NAs
+    rows_to_remove: null
+    row_range_to_keep: null
+    columns_to_keep: ['MINS_ELAPSED', 'pH', 'M_BUTENEDIAL', 'M_THCA_MONOMER'] #, 'M_THCA_NMER', 'M_THCA']
+    pH_indicator: 'methyl_phosphonic_acid'
+    processing_functions: ['calibrate_with_internal_standard',  'calculate_pH'] #, 'calculate_thca_nmer']
+
+    calibration_parameters:
+      cols_to_calibrate: ['SIG_BUTENEDIAL_NORM', 'SIG_THCA_MONOMER'] #, 'SIG_MONOSUB_ALCOHOL_PROTON_TOTAL']
+      ys_out: ['M_BUTENEDIAL', 'M_THCA_MONOMER'] #, 'M_THCA']
+      method: 'signal_to_molarity'
+      internal_standard: 'dimethyl_sulfone'
+
+  plotting:
+    to_plot: ['observations', 'modelling']
+    y_col: ['M_BUTENEDIAL']
+
+bdph9_nmr:
+  paths:
+    raw_data: '20200622_butenedial_decay_nmr.csv'
+    filtered_data: '20210125_bdph9_nmr_FILTERED.csv'
+    processed_data: '20210125_bdph9_nmr_PROCESSED.csv'
+    modeled_data: '20210125_bdph9_nmr_LMFIT.csv'
+    model_parameters_data: '20210125_bdph9_nmr_LMFIT_PARAMS.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.0237
+      DMS: 0.0099
+      NaHCO3: 0.0745
+      Na2CO3: 0.0092
+      MPA: 0.0020
+
+  data_treatment:
+    solution_id: ['bd_ph9.2_d2o_002']
+    filtering_queries: null
+    rows_to_remove: null
+    row_range_to_keep: null
+    columns_to_keep: ['MINS_ELAPSED', 'pH', 'M_BUTENEDIAL']
+    pH_indicator: 'methyl_phosphonic_acid'
+    processing_functions: ['calibrate_with_internal_standard', 'calculate_pH']
+
+    calibration_parameters:
+      cols_to_calibrate: ['SIG_BUTENEDIAL_NORM']
+      ys_out: ['M_BUTENEDIAL']
+      method: 'signal_to_molarity'
+      internal_standard: 'dimethyl_sulfone'
+
+  plotting:
+    to_plot: ['observations', 'modelling']
+    y_col: ['M_BUTENEDIAL']
+
+bdph11_nmr:
+  paths:
+    raw_data: '20200622_butenedial_decay_nmr.csv'
+    filtered_data: '20210125_bdph11_nmr_FILTERED.csv'
+    processed_data: '20210125_bdph11_nmr_PROCESSED.csv'
+    modeled_data: '20210125_bdph11_nmr_LMFIT.csv'
+    model_parameters_data: '20210125_bdph11_nmr_LMFIT_PARAMS.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.0229
+      DMS: 0.0100
+      NaHCO3: 0.0108
+      Na2CO3: 0.0915
+      TMP: 0.0019
+
+  data_treatment:
+    solution_id: ['bd_ph10.6_d2o_001']
+    filtering_queries: null
+    rows_to_remove: null
+    row_range_to_keep: null
+    columns_to_keep: ['MINS_ELAPSED', 'pH', 'M_BUTENEDIAL']
+    pH_indicator: 'tri_methyl_phenol'
+    processing_functions: ['calibrate_with_internal_standard', 'calculate_pH']
+
+    calibration_parameters:
+      cols_to_calibrate: ['SIG_BUTENEDIAL_NORM']
+      ys_out: ['M_BUTENEDIAL']
+      method: 'signal_to_molarity'
+      internal_standard: 'dimethyl_sulfone'
+
+  plotting:
+    to_plot: ['observations', 'modelling']
+    y_col: ['M_BUTENEDIAL']
+
+bdph10_nmr:
+  paths:
+    raw_data: '20200622_butenedial_decay_nmr.csv'
+    filtered_data: '20210125_bdph10_nmr_FILTERED.csv'
+    processed_data: '20210125_bdph10_nmr_PROCESSED.csv'
+    modeled_data: '20210125_bdph10_nmr_LMFIT.csv'
+    model_parameters_data: '20210125_bdph10_nmr_LMFIT_PARAMS.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.0239
+      DMS: 0.0100
+      NaHCO3: 0.0284
+      Na2CO3: 0.0677
+      TMP: 0.0029
+
+  data_treatment:
+    solution_id: ['bd_ph10.2_d2o_001']
+    filtering_queries: null
+    rows_to_remove: null
+    row_range_to_keep: null
+    columns_to_keep: ['MINS_ELAPSED', 'pH', 'M_BUTENEDIAL']
+    pH_indicator: 'tri_methyl_phenol'
+    processing_functions: ['calibrate_with_internal_standard', 'calculate_pH']
+
+    calibration_parameters:
+      cols_to_calibrate: ['SIG_BUTENEDIAL_NORM']
+      ys_out: ['M_BUTENEDIAL']
+      method: 'signal_to_molarity'
+      internal_standard: 'dimethyl_sulfone'
+
+  plotting:
+    to_plot: ['observations', 'modelling']
+    y_col: ['M_BUTENEDIAL']
+
+bdasph9_ms:
+  paths:
+    raw_data: '20200324_butenedial_ammonium_ms.csv'
+    filtered_data: '20201008_bdasph9_ms_FILTERED.csv'
+    processed_data: '20201008_bdasph9_ms_PROCESSED.csv'
+    clustered_data: '20210203_bdasph9_ms_CLUSTERED.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.07
+      NH42SO4: 0.056
+      PEG-6: 0.1
+      NaHCO3: 0.046
+      Na2CO3: 0.006
+
+  data_treatment:
+    solution_id: ['bd_9.2_as_001', 'bd_9.2_as_003']
+    filtering_queries: 'MZ85>0'
+    rows_to_remove: null
+    row_range_to_keep: null
+    columns_to_keep: ['MINS_ELAPSED','MZ84_MZ283','MZ85_MZ283','MZ149_MZ283','MZ150_MZ283','MZ168_MZ283']
+    processing_functions: ['normalize']
+
+  modelling:
+    fitting_function: 'f_butenedial_reactive_loss_only'
+    uncertainty_analysis: True
