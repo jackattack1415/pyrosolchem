@@ -19,10 +19,14 @@ def filter_raw_data_for_experiments(experiments_dict, save_filtered_data=False):
         df_imported = import_raw_csv_data(file_name=raw_ms_file_name)
 
         filtering_queries = experiments_dict[experiment]['data_treatment']['filtering_queries']
+        row_range_to_keep = experiments_dict[experiment]['data_treatment']['row_range_to_keep']
+        rows_to_remove = experiments_dict[experiment]['data_treatment']['rows_to_remove']
         solution_id = experiments_dict[experiment]['data_treatment']['solution_id']
 
         df_filtered = filter_ms_data_in_experiment(df_unfiltered=df_imported,
                                                    filtering_queries=filtering_queries,
+                                                   rows_to_remove=rows_to_remove,
+                                                   row_range_to_keep=row_range_to_keep,
                                                    solution_id=solution_id)
 
         if save_filtered_data:
@@ -33,7 +37,7 @@ def filter_raw_data_for_experiments(experiments_dict, save_filtered_data=False):
     return
 
 
-def filter_ms_data_in_experiment(df_unfiltered, filtering_queries, solution_id):
+def filter_ms_data_in_experiment(df_unfiltered, filtering_queries, rows_to_remove, row_range_to_keep, solution_id):
     """ Removes rows from the dataframe based on queries in the experiments dictionary from
     which processing parameters comes. FIX THIS!
 
@@ -43,26 +47,21 @@ def filter_ms_data_in_experiment(df_unfiltered, filtering_queries, solution_id):
     :return: df. Filtered dataset.
     """
 
-    df_filtered = df_unfiltered[df_unfiltered.SOLUTION_ID == solution_id]
+    df_filtered = df_unfiltered.copy()
+
+    if solution_id is not None:
+        df_filtered = df_filtered.loc[df_filtered['SOLUTION_ID'].isin(solution_id)]
 
     if filtering_queries:
 
-        query_parts = []
-        if processing_parameters['trap_time']:
-            query_parts.append("trapped>={} and trapped<{}".format(*processing_parameters['trap_time']))
+        if row_range_to_keep is not None:
+            df_filtered = df_filtered.loc[row_range_to_keep[0]:row_range_to_keep[1]]
+            df_filtered.query(filtering_queries, inplace=True)
 
-        if processing_parameters['other_query']:
-            query_parts.append(processing_parameters['other_query'])
-
-        query = " and ".join(query_parts)
-
-        if processing_parameters['idx_range']:
-            df_filtered = (df_filtered.query(query).loc[
-                           processing_parameters['idx_range'][0]:processing_parameters['idx_range'][1]])
         else:
-            df_filtered = (df.query(query))
+            df_filtered.query(filtering_queries, inplace=True)
 
-        if processing_parameters['bad_idx']:
-            df_filtered = df_filtered.drop(processing_parameters['bad_idx'])
+    if rows_to_remove:
+        df_filtered.drop(rows_to_remove, inplace=True)
 
     return df_filtered
