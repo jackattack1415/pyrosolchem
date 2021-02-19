@@ -43,7 +43,7 @@ expts = load_experiments('chemical_regimes_experiments.yml')
 
 # 1: nmr measurements butenedial + oh: ph=9, 10, 11, k_oh parametrization
 # plot parameterization (model) as well as the data points from the measurements (pH vs. disproportionation rate)
-expt_labels = ['bdph9_nmr', 'bdph10_nmr', 'bdph11_nmr', 'bdoh_nmr']
+expt_labels = ['bdph8_nmr', 'bdph9_nmr', 'bdph10_nmr', 'bdph11_nmr']
 
 # obtain the measurement points for fitting
 ks_avg = []
@@ -124,7 +124,7 @@ plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
 
 
 # 2: nmr measurements butenedial + ammonium sulfate: ph=4-8
-expt_label = 'bdasph9_nmr'
+expt_label = 'bdnhph5_nmr'
 df_processed = import_treated_csv_data(expts[expt_label]['paths']['processed_data'], expt_label)
 df_modeled = import_treated_csv_data(expts[expt_label]['paths']['modeled_data'], expt_label)
 
@@ -174,9 +174,8 @@ fig_path = create_fig_path(expt_label)  # save path
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
 
 # 3: predictions of reactants and products in bd07as03 and bdahph9 experiments
-# first bd07as03
-expts = load_experiments('chemical_regimes_experiments.yml')
-expt_label = 'bd07as03_bulk_nmr'
+# first bdnhph4
+expt_label = 'bdnhph4_nmr'
 df_processed = import_treated_csv_data(expts[expt_label]['paths']['processed_data'], expt_label)
 df_predicted = import_treated_csv_data(expts[expt_label]['paths']['predicted_data'], expt_label)
 
@@ -223,9 +222,8 @@ ax1.legend(fancybox=False, loc='center right', bbox_to_anchor=(2.7, 0.5), fontsi
 fig_path = create_fig_path(expt_label)  # save path
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
 
-# second bdahph9
-expts = load_experiments('chemical_regimes_experiments.yml')
-expt_label = 'bdahph9_nmr'
+# second bdnhph9
+expt_label = 'bdnhph8_nmr'
 df_processed = import_treated_csv_data(expts[expt_label]['paths']['processed_data'], expt_label)
 df_predicted = import_treated_csv_data(expts[expt_label]['paths']['predicted_data'], expt_label)
 
@@ -282,7 +280,7 @@ fig_path = create_fig_path(expt_label)  # save path
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
 
 
-# 5: plots of nmr: bd, bdnhxph5, bdoh
+# 5: plots of nmr: bd, bdnhph5, bdph11
 fns = ['20210201_butenedial_dilute.csv', '20210201_butenedial_concentrated.csv']
 d = get_project_directory()
 path = os.path.join(d, 'data_raw', 'nmrs', fns[0])
@@ -629,7 +627,7 @@ plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
 
 
 # 7: plots of the bd degradation data
-expt_labels = ['bdph9_nmr', 'bdoh_nmr', 'bdph10_nmr', 'bdph11_nmr']
+expt_labels = ['bdph8_nmr', 'bdph9_nmr', 'bdph10_nmr', 'bdph11_nmr']
 
 fig, (ax0, ax1, ax2, ax3) = plt.subplots(1, 4, figsize=(9, 2.5))
 axes = [ax0, ax1, ax2, ax3]
@@ -710,10 +708,10 @@ pr_rates = np.empty([len(nhxs), len(phs)])
 hca_rates = np.empty([len(nhxs), len(phs)])
 dep_rates = np.empty([len(nhxs), len(phs)])
 
-expt_label = 'bdasph9_nmr'
+expt_label = 'bdnhph5_nmr'
 bdasnmr_params = import_treated_csv_data(expts[expt_label]['paths']['model_parameters_data'], expt_label)
 
-expt_label = 'bdoh_nmr'
+expt_label = 'bdph9_nmr'
 bdohnmr_params = import_treated_csv_data(expts[expt_label]['paths']['model_parameters_data'], expt_label)
 
 # obtain estimates of first-order loss terms for comparison, plot with rgb
