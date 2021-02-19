@@ -4,7 +4,7 @@ from __future__ import division
 import numpy as np
 from scipy.constants import pi, R, N_A
 
-from src.d00_utils.processing_utils import normalize
+# from src.d00_utils.processing_utils import normalize
 
 
 def calculate_molarity_from_weight_fraction(analyte, compounds, solution_comp):
@@ -217,3 +217,23 @@ def convert_mass_to_molar_composition(mass_composition, compounds):
                 molar_composition.update({component: mole_fraction})
 
     return molar_composition
+
+
+def normalize(unnormalized_array):
+    """ Takes in an unnormalized array and normalizes it.
+
+    Parameters
+    ----------
+    unnormalized_array : array
+    array of some values that are unnormalized
+
+    Returns
+    -------
+    normalized_array : array
+    array of some values that are normalized
+    """
+
+    total = unnormalized_array.sum()
+    normalized_array = np.true_divide(unnormalized_array, total)
+
+    return normalized_array

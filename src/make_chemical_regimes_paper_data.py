@@ -20,22 +20,22 @@ from src.d03_modeling.perform_ols import *
 # These data are used for the plotting performed in plot_chemical_regimes_paper_data.py
 
 
-# Load the compounds, water, and all the experiments of interest, given in the bulk_droplet_experiments.yml file
+# Load the compounds, water, and all the experiments of interest, given in the chemical_regimes_experiments.yml file
 compounds, water = load_compounds()
 expts_file_name = 'chemical_regimes_experiments.yml'
 expts = load_experiments(expts_file_name)
 experiment_labels = [*expts]
 
 # Create the filtered, processed, and clustered data in a for loop for all experiments identified in expts
-filter_raw_data_for_experiments(expts, save_filtered_data=True)
-process_data_for_experiments(expts, compounds, save_processed_data=True)
-cluster_data_for_experiments(expts, save_clustered_data=True)
+filter_raw_data_for_experiments(expts, save_filtered_data=False)
+process_data_for_experiments(expts, compounds, save_processed_data=False)
+cluster_data_for_experiments(expts, save_clustered_data=False)
 
 # Perform the modeling (as needed) per experiment to obtain modeled data
 
-# 1. bdph9, bdph10, bdph11, bdoh
+# 1. bd in basic solutions experiments
 # produce modeled data from first order kinetic fits of butenedial nmr data in each experiment
-expt_labels = ['bdph9_nmr', 'bdph10_nmr', 'bdph11_nmr', 'bdoh_nmr']
+expt_labels = ['bdph8_nmr', 'bdph9_nmr', 'bdph10_nmr', 'bdph11_nmr']
 
 for expt_label in expt_labels:
     file_name = expts[expt_label]['paths']['processed_data']
@@ -52,13 +52,16 @@ for expt_label in expt_labels:
     params.add('k', value=0.001, min=0, max=100.)
 
     # produce modeled data sets
-    model_data_with_odes(f_function=first_order, residuals_function=first_order_residuals,
-                         solve_ode_function=first_order_ode, params=params,
-                         experiments_dict=expts, experiment=expt_label,
+    model_data_with_odes(residuals_function=first_order_residuals,
+                         solve_ode_function=first_order_ode,
+                         params=params,
+                         experiments_dict=expts,
+                         experiment=expt_label,
                          x_col_name='MINS_ELAPSED',
                          y_col_names=['M_BUTENEDIAL'],
-                         ts=ts, vars_init=[bd0],
-                         confidence_interval=True, save_data=True)
+                         ts=ts,
+                         confidence_interval=True,
+                         save_data=False)
 
 ks_avg = []
 phs_avg = []
@@ -79,9 +82,9 @@ def disproportionation(oh, ai, aii, aiii):
 
 a, acov = curve_fit(disproportionation, ohs_avg, ks_avg, p0=(1, 1, 1), bounds=([0, 0, 0], [10000, 1000, 100000000]))
 
-# 2. bdasph9_nmr
+# 2. bdnhph5_nmr
 # produce modeled data from system of odes that explains butenedial/nh3 chemical kinetics
-expt_label = 'bdasph9_nmr'
+expt_label = 'bdnhph5_nmr'
 file_name = expts[expt_label]['paths']['processed_data']
 df_processed = import_treated_csv_data(file_name, expt_label)
 
@@ -131,13 +134,16 @@ params.add('aii', value=a[1], vary=False)
 params.add('aiii', value=a[2], vary=False)
 
 # custom-built function produces the modeled data with scipy
-model_data_with_odes(f_function=bdasph9_f, residuals_function=bdasph9_residuals,
-                     solve_ode_function=bdasph9_odes, params=params,
-                     experiments_dict=expts, experiment=expt_label,
+model_data_with_odes(residuals_function=bdasph9_residuals,
+                     solve_ode_function=bdasph9_odes,
+                     params=params,
+                     experiments_dict=expts,
+                     experiment=expt_label,
                      x_col_name='MINS_ELAPSED',
                      y_col_names=['pH', 'M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER'],
-                     ts=ts, vars_init=[ph0, bd0, 0, 0],
-                     confidence_interval=True, save_data=True)
+                     ts=ts,
+                     confidence_interval=True,
+                     save_data=False)
 
 # add estimate of NHx into the modeled data
 file_name = expts[expt_label]['paths']['modeled_data']
@@ -174,7 +180,7 @@ save_data_frame(df_to_save=df_modeled, experiment_label=expt_label, level_of_tre
 
 # 3. predictions of bdnhxph4 and bdnhxph8
 # load the model params from the fitting
-expt_label = 'bdasph9_nmr'
+expt_label = 'bdnhph5_nmr'
 df_model_params = import_treated_csv_data(expts[expt_label]['paths']['model_parameters_data'], expt_label)
 
 coefs = []  # put into list so can be input into model for uncertainty: [[mean, std]....]
@@ -183,8 +189,7 @@ for col in df_model_params.columns:
         coefs.append([df_model_params[col][0], df_model_params[col][1]])
 
 # perform fitting on bdnhxph4
-expts = load_experiments('chemical_regimes_experiments.yml')
-expt_label = 'bd07as03_bulk_nmr'
+expt_label = 'bdnhph4_nmr'
 df_processed = import_treated_csv_data(expts[expt_label]['paths']['processed_data'], expt_label)
 
 # initialize ph and initial conditions of experiment
@@ -201,20 +206,24 @@ coefs_new[13] = nh0 = [expts[expt_label]['experimental_conditions']['solution_we
 ts = np.arange(0, 1500)  # df_processed.MINS_ELAPSED.max())
 
 # custom-built function produces the modeled data with scipy
-predict_data_with_odes(solve_ode_function=bdasph9_odes, ts=ts, coefs=coefs_new, experiment=expt_label,
+predict_data_with_odes(solve_ode_function=bdasph9_odes,
+                       ts=ts,
+                       coefs=coefs_new,
+                       experiment=expt_label,
                        x_col_name='MINS_ELAPSED',
                        y_col_names=['pH', 'M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER'],
-                       confidence_interval=True, save_data=True)
+                       confidence_interval=True,
+                       save_data=False)
 
 # add estimate of NHx into the modeled data
 file_name = expts[expt_label]['paths']['predicted_data']
 df_predicted = import_treated_csv_data(file_name, expt_label)
 df_predicted['M_NH'] = nh0[0] - (bd0[0] - df_predicted['M_BUTENEDIAL'])
 
-save_data_frame(df_to_save=df_predicted, experiment_label=expt_label, level_of_treatment='PREDICTED')
+# save_data_frame(df_to_save=df_predicted, experiment_label=expt_label, level_of_treatment='PREDICTED')
 
 # load the model params from the fitting
-expt_label = 'bdasph9_nmr'
+expt_label = 'bdnhph5_nmr'
 df_model_params = import_treated_csv_data(expts[expt_label]['paths']['model_parameters_data'], expt_label)
 
 coefs = []  # put into list so can be input into model for uncertainty: [[mean, std]....]
@@ -223,8 +232,7 @@ for col in df_model_params.columns:
         coefs.append([df_model_params[col][0], df_model_params[col][1]])
 
 # perform fitting on bdnhxph8
-expts = load_experiments('chemical_regimes_experiments.yml')
-expt_label = 'bdahph9_nmr'
+expt_label = 'bdnhph8_nmr'
 df_processed = import_treated_csv_data(expts[expt_label]['paths']['processed_data'], expt_label)
 
 # initialize ph and initial conditions of experiment
@@ -247,10 +255,14 @@ coefs_new.insert(4, [0, 0])
 
 
 ts = np.arange(0, df_processed.MINS_ELAPSED.max() + 5, 0.1)
-predict_data_with_odes(solve_ode_function=bdahph9_odes, ts=ts, coefs=coefs_new, experiment=expt_label,
+predict_data_with_odes(solve_ode_function=bdahph9_odes,
+                       ts=ts,
+                       coefs=coefs_new,
+                       experiment=expt_label,
                        x_col_name='MINS_ELAPSED',
                        y_col_names=['pH', 'M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER', 'M_BD_OH'],
-                       confidence_interval=True, save_data=True)
+                       confidence_interval=True,
+                       save_data=False)
 
 # add estimate of NHx into the modeled data
 file_name = expts[expt_label]['paths']['predicted_data']
@@ -283,4 +295,4 @@ solutions_min = np.min(solutions_array, 0)
 df_predicted['pH_MIN'] = solutions_min
 df_predicted['pH_MAX'] = solutions_max
 
-save_data_frame(df_to_save=df_predicted, experiment_label=expt_label, level_of_treatment='PREDICTED')
+# save_data_frame(df_to_save=df_predicted, experiment_label=expt_label, level_of_treatment='PREDICTED')
