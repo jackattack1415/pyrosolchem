@@ -27,9 +27,9 @@ expts = load_experiments(expts_file_name)
 experiment_labels = [*expts]
 
 # Create the filtered, processed, and clustered data in a for loop for all experiments identified in expts
-filter_raw_data_for_experiments(expts, save_filtered_data=False)
-process_data_for_experiments(expts, compounds, save_processed_data=False)
-cluster_data_for_experiments(expts, save_clustered_data=False)
+filter_raw_data_for_experiments(expts, save_filtered_data=True)
+process_data_for_experiments(expts, compounds, save_processed_data=True)
+cluster_data_for_experiments(expts, save_clustered_data=True)
 
 # Perform the modeling (as needed) per experiment to obtain modeled data
 
@@ -61,7 +61,7 @@ for expt_label in expt_labels:
                          y_col_names=['M_BUTENEDIAL'],
                          ts=ts,
                          confidence_interval=True,
-                         save_data=False)
+                         save_data=True)
 
 ks_avg = []
 phs_avg = []
@@ -143,7 +143,7 @@ model_data_with_odes(residuals_function=bdasph9_residuals,
                      y_col_names=['pH', 'M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER'],
                      ts=ts,
                      confidence_interval=True,
-                     save_data=False)
+                     save_data=True)
 
 # add estimate of NHx into the modeled data
 file_name = expts[expt_label]['paths']['modeled_data']
@@ -213,14 +213,14 @@ predict_data_with_odes(solve_ode_function=bdasph9_odes,
                        x_col_name='MINS_ELAPSED',
                        y_col_names=['pH', 'M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER'],
                        confidence_interval=True,
-                       save_data=False)
+                       save_data=True)
 
 # add estimate of NHx into the modeled data
 file_name = expts[expt_label]['paths']['predicted_data']
 df_predicted = import_treated_csv_data(file_name, expt_label)
 df_predicted['M_NH'] = nh0[0] - (bd0[0] - df_predicted['M_BUTENEDIAL'])
 
-# save_data_frame(df_to_save=df_predicted, experiment_label=expt_label, level_of_treatment='PREDICTED')
+save_data_frame(df_to_save=df_predicted, experiment_label=expt_label, level_of_treatment='PREDICTED')
 
 # load the model params from the fitting
 expt_label = 'bdnhph5_nmr'
@@ -262,7 +262,7 @@ predict_data_with_odes(solve_ode_function=bdahph9_odes,
                        x_col_name='MINS_ELAPSED',
                        y_col_names=['pH', 'M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER', 'M_BD_OH'],
                        confidence_interval=True,
-                       save_data=False)
+                       save_data=True)
 
 # add estimate of NHx into the modeled data
 file_name = expts[expt_label]['paths']['predicted_data']
@@ -295,4 +295,4 @@ solutions_min = np.min(solutions_array, 0)
 df_predicted['pH_MIN'] = solutions_min
 df_predicted['pH_MAX'] = solutions_max
 
-# save_data_frame(df_to_save=df_predicted, experiment_label=expt_label, level_of_treatment='PREDICTED')
+save_data_frame(df_to_save=df_predicted, experiment_label=expt_label, level_of_treatment='PREDICTED')
