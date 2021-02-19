@@ -184,8 +184,7 @@ H_nh3 = 61  # M atm-1
 M_nh3s = ppb_nh3s * H_nh3 * 1e-9
 
 # import the modeling mechanism (from bdasph9 and the bdoh fittings)
-expts = load_experiments('chemical_regimes_experiments.yml')
-expt_label = 'bdasph9_nmr'
+expt_label = 'bdnhph5_nmr'
 file_name = expts[expt_label]['paths']['model_parameters_data']
 model_parameters = import_treated_csv_data(file_name, expt_label)
 # add parameters: k[0] = mean
@@ -285,9 +284,7 @@ plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=True)
 
 
 # 4: nmr and ms measurements butenedial + ammonium sulfate: ph=4-8, conversion factors
-expts_file_name = 'chemical_regimes_experiments.yml'
-expts = load_experiments(expts_file_name)
-expt_labels = ['bdasph9_nmr', 'bdasph9_ms']
+expt_labels = ['bdnhph5_nmr', 'bdnhph5_ms']
 df_nmr_clustered = import_treated_csv_data(expts[expt_labels[0]]['paths']['clustered_data'], expt_labels[0])
 df_ms_clustered = import_treated_csv_data(expts[expt_labels[1]]['paths']['clustered_data'], expt_labels[1])
 
@@ -536,7 +533,6 @@ fig_path = create_fig_path('droplet_chromatograph')  # save path
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
 
 # 7. bd10ss10_edb_ms vs. bd_edb_ms
-expts = load_experiments('bulk_droplet_experiments.yml')
 expt_label = 'bd10ss10_edb_ms'
 processed_file_name = expts[expt_label]['paths']['processed_data']
 modeled_file_name = expts[expt_label]['paths']['modeled_data']
@@ -628,12 +624,10 @@ fig_path = create_fig_path('aged_droplet_loss')
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
 
 # 9. diazepine comparison
-expts = load_experiments('bulk_droplet_experiments.yml')
 expt_label = 'bd10ag30_edb_ms'
 df_droplet = import_treated_csv_data(expts[expt_label]['paths']['processed_data'], expt_label)
 
-expts = load_experiments('chemical_regimes_experiments.yml')
-expt_label = 'bdasph9_ms'
+expt_label = 'bdnhph5_ms'
 df_solution = import_treated_csv_data(expts[expt_label]['paths']['processed_data'], expt_label)
 
 WTFRAC_PEG6_SOLUTION = expts[expt_label]['experimental_conditions']['solution_weight_fractions']['PEG-6']

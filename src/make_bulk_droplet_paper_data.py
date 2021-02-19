@@ -26,10 +26,8 @@ cluster_data_for_experiments(expts, save_clustered_data=True)
 
 # Perform the modeling (as needed) for each experiment
 
-# 1. create the calibration factors to convert bdasph9_ms to M, using the bdasph9_nmr
-expts_file_name = 'chemical_regimes_experiments.yml'
-expts = load_experiments(expts_file_name)
-expt_labels = ['bdasph9_nmr', 'bdasph9_ms']
+# 1. create the calibration factors to convert bdasph9_ms to M, using the bdnhph5_nmr
+expt_labels = ['bdnhph5_nmr', 'bdnhph5_ms']
 df_nmr_processed = import_treated_csv_data(expts[expt_labels[0]]['paths']['processed_data'], expt_labels[0])
 df_ms_processed = import_treated_csv_data(expts[expt_labels[1]]['paths']['processed_data'], expt_labels[1])
 
@@ -97,9 +95,7 @@ save_data_frame(df_to_save=df_ms_clustered, experiment_label=expt_labels[1], lev
 
 # produce modeled data
 # import the modeling mechanism (from bdasph9 and the bdoh fittings)
-expts_file_name = 'chemical_regimes_experiments.yml'
-expts = load_experiments(expts_file_name)
-expt_label = 'bdasph9_nmr'
+expt_label = 'bdnhph5_nmr'
 file_name = expts[expt_label]['paths']['model_parameters_data']
 model_parameters = import_treated_csv_data(file_name, expt_label)
 
@@ -167,11 +163,11 @@ params.add('k', value=0.001, min=0, max=10.)
 t_max = int(np.max(df_processed_bd10ss10.MINS_ELAPSED) + 5)
 ts = np.linspace(0, t_max, t_max + 1)
 
-model_data_with_odes(f_function=first_order, residuals_function=first_order_residuals,
+model_data_with_odes(residuals_function=first_order_residuals,
                      solve_ode_function=first_order_ode, params=params,
                      experiments_dict=expts, experiment=expt_label,
                      x_col_name='MINS_ELAPSED', y_col_names=['MZ85_MZ283'], ts=ts,
-                     vars_init=X_0, confidence_interval=True, save_data=True)
+                     confidence_interval=True, save_data=True)
 
 # bd_edb_ms
 expt_label = 'bd_edb_ms'
@@ -185,8 +181,8 @@ params.add('k', value=0.001, min=0, max=10.)
 t_max = int(np.max(df_processed_bd.MINS_ELAPSED) + 5)
 ts = np.linspace(0, t_max, t_max + 1)
 
-model_data_with_odes(f_function=first_order, residuals_function=first_order_residuals,
+model_data_with_odes(residuals_function=first_order_residuals,
                      solve_ode_function=first_order_ode, params=params,
                      experiments_dict=expts, experiment=expt_label,
                      x_col_name='MINS_ELAPSED', y_col_names=['MZ85_MZ283'], ts=ts,
-                     vars_init=X_0, confidence_interval=True, save_data=True)
+                     confidence_interval=True, save_data=True)

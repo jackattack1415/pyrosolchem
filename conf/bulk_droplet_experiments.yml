@@ -1,44 +1,6 @@
 ## DICTIONARIES OF PARAMETERS BY EXPERIMENT FOR A PARTICULAR SET OF STUDIES
 # Contains paths to datasets as well as parameters used in the processing of those datasets
 
-bd07as03_bulk_nmr:
-  paths:
-    raw_data: '20200319_butenedial_ammonium_bulk_nmr.csv'
-    filtered_data: '20200622_bd07as03_bulk_nmr_FILTERED.csv'
-    processed_data: '20200622_bd07as03_bulk_nmr_PROCESSED.csv'
-    modeled_data: '20200622_bd07as03_bulk_nmr_LMFIT.csv'
-    model_parameters_data: '20200622_bd07as03_bulk_nmr_LMFIT_PARAMS.csv'
-
-  experimental_conditions:
-    solution_weight_fractions:
-      butenedial: 0.0525
-      NH42SO4: 0.03
-
-  data_treatment:
-    solution_id: ['bd07as03_20190918']
-    filtering_queries: null
-    rows_to_remove: null
-    row_range_to_keep: null
-    columns_to_keep: ['MINS_ELAPSED', 'M_BUTENEDIAL', 'pH']
-    pH_indicator: 'acetic_acid'
-    processing_functions: ['calculate_pH', 'calibrate_from_initial_conditions']
-
-    calibration_parameters:
-      analyte: ['butenedial']
-      cols_to_calibrate: ['SIG_BUTENEDIAL_NORM']
-      ys_out: ['M_BUTENEDIAL']
-      calibration_query: 'MINS_ELAPSED < 25'
-      method: 'weight_fraction_to_molarity'
-
-  modelling:
-    fitting_function: 'f_butenedial_reactive_loss_only'
-    uncertainty_analysis: True
-
-  plotting:
-    to_plot: ['observations', 'modelling']
-    y_col: ['M_BUTENEDIAL']
-
-
 bd07as03_bulk_ms:
   paths:
     raw_data: '20200324_butenedial_ammonium_ms.csv'
@@ -52,17 +14,12 @@ bd07as03_bulk_ms:
       NH42SO4: 0.03
 
   data_treatment:
-    solution_id: ['bd07hg20as03'] # requires several solutions
+    solution_id: ['bd07hg20as03']
     rows_to_remove: null
     row_range_to_keep: null
     filtering_queries: 'MINS_ELAPSED<10 and MZ283>30000'
     columns_to_keep: ['MINS_ELAPSED', 'MZ84_MZ283', 'MZ85_MZ283']
     processing_functions: ['normalize']
-
-  plotting:
-    to_plot: ['observations']
-    y_col: ['MZ84_MZ283']
-
 
 bd07as03_edb_ms:
   paths:
@@ -83,11 +40,6 @@ bd07as03_edb_ms:
     filtering_queries: 'MINS_VIAL<10'
     columns_to_keep: ['MINS_ELAPSED', 'MZ84_MZ283','MZ85_MZ283']
     processing_functions: ['normalize']
-
-  plotting:
-    to_plot: ['observations']
-    y_col: ['MZ84_MZ283']
-
 
 bd10agxx_edb_ms:
   paths:
@@ -110,7 +62,6 @@ bd10agxx_edb_ms:
                       'MZ168_MZ283', 'M_AMMONIA', 'PPM_AMMONIA']
     processing_functions: ['normalize', 'calculate_ammonia_from_bubbler']
 
-
 bd10ag30_edb_ms:
   paths:
     raw_data: '20200324_butenedial_ammonia_gas_ms.csv'
@@ -126,7 +77,7 @@ bd10ag30_edb_ms:
     x_water: 0.75
 
   data_treatment:
-    solution_id: null
+    solution_id: ['bd10hg20_003', 'butenedial-peg6-181018', 'butenedial-peg6-181016']
     rows_to_remove: null
     row_range_to_keep: null
     filtering_queries: 'MZ283>10000 and mM_AMMONIA_BUBBLER==0.29'
@@ -134,9 +85,11 @@ bd10ag30_edb_ms:
                       'M_AMMONIA', 'PPM_AMMONIA']
     processing_functions: ['normalize', 'calculate_ammonia_from_bubbler']
 
-
 bd07as03_pr_edb_ms:
   paths:
+    filtering_queries: null
+    rows_to_remove: null
+    row_range_to_keep: null
     raw_data: '20200324_butenedial_ammonium_ms.csv'
     filtered_data: '20200326_bd07as03_pr_edb_ms_FILTERED.csv'
     processed_data: '20200326_bd07as03_pr_edb_ms_PROCESSED.csv'
@@ -154,28 +107,6 @@ bd07as03_pr_edb_ms:
     filtering_queries: 'MZ283>5000 and MINS_TRAPPED<500'
     columns_to_keep: ['trapped', 'SOLUTION_ID', 'MZ84_MZ283', 'MZ85_MZ283']
     processing_functions: ['normalize']
-
-
-bd07as03_bd_edb_ms:
-  paths:
-    raw_data: '20200324_butenedial_ammonium_ms.csv'
-    filtered_data: '20200511_bd07as03_bd_edb_ms_FILTERED.csv'
-    processed_data: '20200511_bd07as03_bd_edb_ms_PROCESSED.csv'
-
-  experimental_conditions:
-    solution_weight_fractions:
-      butenedial: 0.0525
-      PEG-6: 0.2
-      NH42SO4: 0.03
-
-  data_treatment:
-    solution_id: ['SOLUTION_ID'] # requires several solutions
-    rows_to_remove: null
-    row_range_to_keep: [50, 74]
-    filtering_queries: 'MINS_VIAL>800 and MZ283>5000 and MINS_TRAPPED<500'
-    columns_to_keep: ['MINS_TRAPPED', 'SOLUTION_ID', 'MZ84_MZ283', 'MZ85_MZ283']
-    processing_functions: ['normalize']
-
 
 bd10ss10_edb_ms:
   paths:
@@ -223,3 +154,60 @@ bd_edb_ms:
     filtering_queries: '(rh>50 and MINS_ELAPSED<300 and MINS_ELAPSED>2) or (MINS_ELAPSED<5 and MINS_ELAPSED>2)'
     columns_to_keep: ['MINS_ELAPSED', 'MZ85_MZ283']
     processing_functions: ['normalize']
+
+bdnhph5_ms:
+  paths:
+    raw_data: '20200324_butenedial_ammonium_ms.csv'
+    filtered_data: '20210126_bdnhph5_ms_FILTERED.csv'
+    processed_data: '20210126_bdnhph5_ms_PROCESSED.csv'
+    clustered_data: '20210203_bdnhph5_ms_CLUSTERED.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.07
+      NH42SO4: 0.056
+      PEG-6: 0.1
+      NaHCO3: 0.046
+      Na2CO3: 0.006
+
+  data_treatment:
+    solution_id: ['bd_9.2_as_001', 'bd_9.2_as_003']
+    rows_to_remove: null
+    row_range_to_keep: null
+    filtering_queries: 'MZ85>0'
+    columns_to_keep: ['MINS_ELAPSED','MZ84_MZ283','MZ85_MZ283','MZ149_MZ283','MZ150_MZ283','MZ168_MZ283']
+    processing_functions: ['normalize']
+
+bdnhph5_nmr:
+  paths:
+    raw_data: '20200319_butenedial_ammonium_bulk_nmr.csv'
+    filtered_data: '20210125_bdnhph5_nmr_FILTERED.csv'
+    processed_data: '20210125_bdnhph5_nmr_PROCESSED.csv'
+    clustered_data: '20210203_bdnhph5_nmr_CLUSTERED.csv'
+    modeled_data: '20210125_bdnhph5_nmr_LMFIT.csv'
+    model_parameters_data: '20210125_bdnhph5_nmr_LMFIT_PARAMS.csv'
+
+  experimental_conditions:
+    solution_weight_fractions:
+      butenedial: 0.080
+      NH42SO4: 0.060
+      DMS: 0.0096
+      NaHCO3: 0.0449
+      Na2CO3: 0.0062
+
+  data_treatment:
+    solution_id: ['bdnhph5_ms']
+    filtering_queries: null
+    rows_to_remove: null
+    row_range_to_keep: null
+    columns_to_keep: ['MINS_ELAPSED', 'pH', 'H_PLUS', 'M_BUTENEDIAL', 'M_DIMER', 'M_DIAZEPINE',
+                      'M_C4H5NO']
+    pH_indicator: 'acetic_acid'
+    nh_source: 'ammonium_sulfate'
+    processing_functions: ['calculate_pH', 'calibrate_with_internal_standard', 'calculate_nh']
+
+    calibration_parameters:
+      cols_to_calibrate: ['SIG_BUTENEDIAL_NORM', 'SIG_SHIFT_3', 'SIG_SHIFT_11', 'SIG_SHIFT_1']
+      ys_out: ['M_BUTENEDIAL', 'M_DIMER', 'M_DIAZEPINE', 'M_C4H5NO']
+      method: 'signal_to_molarity'
+      internal_standard: 'dimethyl_sulfone'
