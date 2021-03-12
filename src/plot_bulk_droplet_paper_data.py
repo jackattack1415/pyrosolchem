@@ -7,6 +7,7 @@ from matplotlib import rc
 from matplotlib.gridspec import GridSpec
 import matplotlib.patches as patches
 from scipy.integrate import odeint
+from scipy.optimize import fsolve
 import sklearn.cluster as cluster
 import statsmodels.api as sm
 
@@ -151,7 +152,7 @@ for tick in range(3):
     ax.fill_between(df_pred_bd10ag30.MINS_ELAPSED, df_pred_bd10ag30[col + '_MIN'], df_pred_bd10ag30[col + '_MAX'],
                     color='0.8', label='95\% Confidence Interval')
     ax.plot(df_pred_bd10ag30.MINS_ELAPSED, df_pred_bd10ag30[col],
-                    color='0.25', label='Best Model Prediction')
+                    color='0.25', label='Model Prediction')
     ax.scatter(df_proc_bd10ag30.MINS_ELAPSED, df_proc_bd10ag30[col], color='0.25', s=30, label='Observation')
 
     ax.set_xlim(-5, 95)
@@ -201,13 +202,29 @@ aii = 64.6
 aiii = 1.61e4
 
 
+K_S2 = 1.2e-2
+K_N = 10**(-9.25)
+
 def butenedial_branching_ode(ts, coefs):
     def odes(y, t):
         bdg, bd, pr, dm = y
 
         # solution characteristics
-        ph = coefs[5]
-        hp = 10 ** (-ph)
+        S_T = coefs[5]  # total sulfur, moles
+
+        def calculate_hplus(H):
+            
+            # from sulfate equilibrium, assuming all h2so4 dissociated since strong acid
+            HSO4 = S_T * (1 + (K_S2 / H))**(-1)
+            SO4 = 2 * S_T * (1 + (H / K_S2))**(-1)
+            
+            # from ammonia equilibrium, where coefs[4] is nh3(particle)
+            NH4 = H * coefs[4] / K_N
+            
+            return HSO4 + 2 * SO4 - NH4 - H  # charge balance
+
+        hp = fsolve(calculate_hplus, 1e-5)
+
         oh = 1e-14 / hp
         nh3 = coefs[4]
 
@@ -227,31 +244,31 @@ def butenedial_branching_ode(ts, coefs):
     return solution
 
 
-butenedial_branching_ph4 = np.empty([len(M_nh3s)])
-butenedial_branching_ph6 = np.empty([len(M_nh3s)])
+butenedial_branching_low_sulfur = np.empty([len(M_nh3s)])
+butenedial_branching_high_sulfur = np.empty([len(M_nh3s)])
 ts = np.arange(0, 1000)
 for tick in range(len(M_nh3s)):
     M_nh3 = M_nh3s[tick]
-    ph4 = 4
-    ph6 = 6
+    S_low = 0.1
+    S_high = 5
     bd0 = 1
     pr0 = dm0 = bdg0 = 0
-    coef = [bdg0, bd0, pr0, dm0, M_nh3, ph4]
+    coef = [bdg0, bd0, pr0, dm0, M_nh3, S_low]
     solution = butenedial_branching_ode(ts, coef)
-    butenedial_branching_ph4[tick] = solution[-1, 0]
+    butenedial_branching_low_sulfur[tick] = solution[-1, 0]
 
-    coef = [bdg0, bd0, pr0, dm0, M_nh3, ph6]
+    coef = [bdg0, bd0, pr0, dm0, M_nh3, S_high]
     solution = butenedial_branching_ode(ts, coef)
-    butenedial_branching_ph6[tick] = solution[-1, 0]
+    butenedial_branching_high_sulfur[tick] = solution[-1, 0]
 
 fig, ax = plt.subplots()
 
-ax.fill_between(ppb_nh3s, butenedial_branching_ph4, butenedial_branching_ph6, color='gray', alpha=0.2)
-ax.fill_between(ppb_nh3s, 1 - butenedial_branching_ph4, 1 - butenedial_branching_ph6, color='chocolate', alpha=0.4)
-ax.plot(ppb_nh3s, butenedial_branching_ph4, color='gray', ls=':', lw=1, alpha=0.8)
-ax.plot(ppb_nh3s, butenedial_branching_ph6, color='gray', ls='--', lw=1, alpha=0.8)
-ax.plot(ppb_nh3s, 1 - butenedial_branching_ph4, color='chocolate', ls=':', lw=1, alpha=0.8)
-ax.plot(ppb_nh3s, 1 - butenedial_branching_ph6, color='chocolate', ls='--', lw=1, alpha=0.8)
+ax.fill_between(ppb_nh3s, butenedial_branching_low_sulfur, butenedial_branching_high_sulfur, color='gray', alpha=0.2)
+ax.fill_between(ppb_nh3s, 1 - butenedial_branching_low_sulfur, 1 - butenedial_branching_high_sulfur, color='chocolate', alpha=0.4)
+ax.plot(ppb_nh3s, butenedial_branching_low_sulfur, color='gray', lw=1, alpha=0.8)
+ax.plot(ppb_nh3s, butenedial_branching_high_sulfur, color='gray', lw=1, alpha=0.8)
+ax.plot(ppb_nh3s, 1 - butenedial_branching_low_sulfur, color='chocolate', lw=1, alpha=0.8)
+ax.plot(ppb_nh3s, 1 - butenedial_branching_high_sulfur, color='chocolate', lw=1, alpha=0.8)
 ax.set_xscale('log')
 ax.set_xlabel('NH$_3$ mixing ratio')
 ax.set_xticklabels(ax.get_xticks())
@@ -265,7 +282,7 @@ for tick in range(len(labels)):
         labels[tick] = str(int(labels[tick]))[:-3] + ' ppm'
 ax.set_xticklabels(labels)
 
-ax.set_ylim(-0.02, 1.02)
+ax.set_ylim(-0.1, 1.02)
 ax.yaxis.set_major_locator(ticker.MultipleLocator(0.25))
 ax.set_yticklabels(ax.get_yticks())
 labels = [str(round(float(item.get_text()), 2)) for item in ax.get_yticklabels()]
@@ -274,10 +291,19 @@ ax.set_yticklabels(labels)
 ax.set_title('Butenedial branching ratio')
 ax.text(1.2, 0.8, r'\textbf{Evaporation}', c='gray', size=14)
 ax.text(10000, 0.6, r'\textbf{Reaction}', c='chocolate', size=14)
-ax.text(600, 0.78, r'pH 4', c='gray', size=12, rotation=-55)
-ax.text(150, 0.53, r'pH 6', c='gray', size=12, rotation=-60)
-ax.text(300, 0.05, r'pH 4', c='chocolate', size=12, rotation=45)
-ax.text(70, 0.26, r'pH 6', c='chocolate', size=12, rotation=50)
+ax.text(700, 0.85, r'5 M S(VI)', c='gray', size=10) #, rotation=-55)
+ax.text(75, 0.53, r'0.1 M S(VI)', c='gray', size=10) #, rotation=-65)
+ax.text(300, 0.03, r'5 M S(VI)', c='chocolate', size=10) #, rotation=45)
+ax.text(25, 0.2, r'0.1 M S(VI)', c='chocolate', size=10) #, rotation=70)
+
+ax.axvline(x=0.1, ymin=0, ymax=0.09, c='k', ls='--', lw=0.5)
+ax.axvline(x=10, ymin=0, ymax=0.09, c='k', ls='--', lw=0.5)
+ax.axvline(x=100, ymin=0, ymax=0.09, c='k', ls='--', lw=0.5)
+ax.axhline(y=0, xmin=0, xmax=1, c='k', lw=0.5)
+ax.text(0.06, -0.06, 'UT/Remote', backgroundcolor='1', size=8)
+ax.text(1, -0.06, 'LT', size=8)
+ax.text(17, -0.06, 'Polluted', size=8)
+ax.text(2000, -0.06, 'Plumes', size=8)
 
 fig_path = create_fig_path('reaction_vs_evaporation')
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=True)
