@@ -177,3 +177,5 @@ def predict_data_with_odes(solve_ode_function, ts, coefs, experiment, x_col_name
         save_data_frame(df_to_save=df_out,
                         experiment_label=experiment,
                         level_of_treatment='PREDICTED')
+
+    return df_out
