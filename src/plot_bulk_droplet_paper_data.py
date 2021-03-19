@@ -38,11 +38,11 @@ expt_labels = ['bd07as03_bulk_ms', 'bd07as03_edb_ms']
 ax_left, ax_right = plot_csv_data_with_break(experiments_dict=expts, experiment_names=expt_labels,
                                              x_data_col='MINS_ELAPSED', y_data_cols=['MZ84_MZ283'],
                                              series_labels=[['Bulk Liquid'], ['Levitated Particle']],
-                                             series_colors=[['0.75'], ['0.25']],
+                                             series_colors=[['mistyrose'], ['coral']],
                                              series_markers=[['o'], ['o']],
                                              x_label='hours', y_label=None,
                                              left_xlims=[-50, 350], right_xlims=[750, 1150],
-                                             fig_title=r'PR (norm. counts)', series_title='Reaction Medium')
+                                             fig_title=r'PR (normalized counts)', series_title='Reaction Medium')
 
 positions = (0, 240)
 ax_left.set_xticks(positions)
@@ -300,7 +300,8 @@ ax.axvline(x=0.1, ymin=0, ymax=0.09, c='k', ls='--', lw=0.5)
 ax.axvline(x=10, ymin=0, ymax=0.09, c='k', ls='--', lw=0.5)
 ax.axvline(x=100, ymin=0, ymax=0.09, c='k', ls='--', lw=0.5)
 ax.axhline(y=0, xmin=0, xmax=1, c='k', lw=0.5)
-ax.text(0.06, -0.06, 'UT/Remote', backgroundcolor='1', size=8)
+ax.text(0.1, 0.05, 'UT/Remote', backgroundcolor='1', size=8)
+ax.plot([0.07, 0.09], [-0.02, 0.03], color='k', lw=0.5)
 ax.text(1, -0.06, 'LT', size=8)
 ax.text(17, -0.06, 'Polluted', size=8)
 ax.text(2000, -0.06, 'Plumes', size=8)
