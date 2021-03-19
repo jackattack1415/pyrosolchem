@@ -42,7 +42,7 @@ ax_left, ax_right = plot_csv_data_with_break(experiments_dict=expts, experiment_
                                              series_markers=[['o'], ['o']],
                                              x_label='hours', y_label=None,
                                              left_xlims=[-50, 350], right_xlims=[750, 1150],
-                                             fig_title=r'PR (normalized counts)', series_title='Reaction Medium')
+                                             fig_title=r'PR (n.s.)', series_title='Reaction Medium')
 
 positions = (0, 240)
 ax_left.set_xticks(positions)
@@ -75,7 +75,7 @@ cols_to_plot = ['MZ85_MZ283', 'MZ84_MZ283']
 mz84_max = df_proc_bd10agxx.MZ84_MZ283.max()
 mz85_max = df_proc_bd10agxx.MZ85_MZ283.max()
 
-fig, ax = plt.subplots(2, len(ppms_ammonia), sharex=True, figsize=(9, 5))
+fig, ax = plt.subplots(2, len(ppms_ammonia), sharex=True, figsize=(6, 3))
 plt.tight_layout()
 plt.subplots_adjust(wspace=0.2, hspace=0.2)
 
@@ -83,14 +83,23 @@ for tick in range(len(ppms_ammonia)):
     ppm_ammonia = ppms_ammonia[tick]
     df = df_proc_bd10agxx[df_proc_bd10agxx.PPM_AMMONIA == ppm_ammonia]
 
-    ax[0, tick].scatter(df['MINS_ELAPSED'], df.MZ85_MZ283, s=50, facecolors='0.25', edgecolor='0.25')
-    ax[1, tick].scatter(df['MINS_ELAPSED'], df.MZ84_MZ283, s=50, facecolors='0.25', edgecolor='0.25')
+    ax[0, tick].scatter(df['MINS_ELAPSED'], df.MZ85_MZ283, s=30, facecolors='cornflowerblue', edgecolor='0.25')
+    ax[1, tick].scatter(df['MINS_ELAPSED'], df.MZ84_MZ283, s=30, facecolors='coral', edgecolor='0.25')
+    ax[0, tick].tick_params('both', length=5, width=2, which='major')
+    ax[1, tick].tick_params('both', length=5, width=2, which='major')
 
-    ax[0, tick].set_xlim(-5, 80)
-    ax[1, tick].set_xlim(-5, 80)
+    ax[0, tick].set_xlim(-5, 85)
+    ax[1, tick].set_xlim(-5, 85)
+    ax[0, tick].yaxis.set_label_position("right")
+    ax[0, tick].yaxis.tick_right()
+    ax[1, tick].yaxis.set_label_position("right")
+    ax[1, tick].yaxis.tick_right()
+
     ax[1, tick].xaxis.set_major_locator(ticker.MultipleLocator(40))
+    ax[0, tick].yaxis.set_major_locator(ticker.MultipleLocator(0.03))
+    ax[1, tick].yaxis.set_major_locator(ticker.MultipleLocator(0.1))
 
-    ax[0, tick].set_ylim(-mz85_max * 0.1, mz85_max * 1.2)
+    ax[0, tick].set_ylim(-mz85_max * 0.1, mz85_max * 1.3)
     ax[1, tick].set_ylim(-mz84_max * 0.1, mz84_max * 1.2)
 
     ax[1, tick].set_xticklabels(ax[1, tick].get_xticks())
@@ -105,9 +114,9 @@ for tick in range(len(ppms_ammonia)):
     labels = [str(round(float(item.get_text()), 2)) for item in ax[1, tick].get_yticklabels()]
     ax[1, tick].set_yticklabels(labels, fontsize=12)
 
-    if tick != 0:
-        ax[0, tick].tick_params(labelleft=False)
-        ax[1, tick].tick_params(labelleft=False)
+    if tick != 3:
+        ax[0, tick].tick_params(labelright=False)
+        ax[1, tick].tick_params(labelright=False)
 
     ax[0, tick].tick_params(labelbottom=False)
     ax[1, tick].set_xlabel('mins')
@@ -117,8 +126,10 @@ for tick in range(len(ppms_ammonia)):
         title_str = '{0:.0f} ppm NH$_3$'.format(ppm_ammonia)
     ax[0, tick].set_title(title_str, fontsize=14)
 
-ax[0, 0].set_ylabel('BD\n(norm. counts)')
-ax[1, 0].set_ylabel('PR\n(norm. counts)')
+ax[0, 0].text(-40, 0.02, 'BD\n(n.s.)', multialignment='center', horizontalalignment='left',
+              verticalalignment='center', fontsize=14)
+ax[1, 0].text(-40, 0.05, 'PR\n(n.s.)', multialignment='center', horizontalalignment='left',
+              verticalalignment='center', fontsize=14)
 
 fig_path = create_fig_path('bdag_reaction')
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
@@ -136,6 +147,7 @@ plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
 # 3: calibrated bd10ag30_edb_ms data vs. model prediction
 expt_label = 'bd10ag30_edb_ms'
 df_proc_bd10ag30 = import_treated_csv_data(expts[expt_label]['paths']['processed_data'], expt_label)
+df_clus_bd10ag30 = import_treated_csv_data(expts[expt_label]['paths']['clustered_data'], expt_label)
 df_pred_bd10ag30 = import_treated_csv_data(expts[expt_label]['paths']['predicted_data'], expt_label)
 
 cols_to_plot = ['M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER']
@@ -154,6 +166,7 @@ for tick in range(3):
     ax.plot(df_pred_bd10ag30.MINS_ELAPSED, df_pred_bd10ag30[col],
                     color='0.25', label='Model Prediction')
     ax.scatter(df_proc_bd10ag30.MINS_ELAPSED, df_proc_bd10ag30[col], color='0.25', s=30, label='Observation')
+    ax.errorbar(df_clus_bd10ag30.MINS_ELAPSED, df_clus_bd10ag30[col], color='0.25', s=30, label='Cluster')
 
     ax.set_xlim(-5, 95)
     ax.xaxis.set_major_locator(ticker.MultipleLocator(30))
@@ -291,8 +304,8 @@ ax.set_yticklabels(labels)
 ax.set_title('Butenedial branching ratio')
 ax.text(1.2, 0.8, r'\textbf{Evaporation}', c='gray', size=14)
 ax.text(10000, 0.6, r'\textbf{Reaction}', c='chocolate', size=14)
-ax.text(700, 0.85, r'5 M S(VI)', c='gray', size=10) #, rotation=-55)
-ax.text(75, 0.53, r'0.1 M S(VI)', c='gray', size=10) #, rotation=-65)
+ax.text(700, 0.87, r'5 M S(VI)', c='gray', size=10) #, rotation=-55)
+ax.text(50, 0.6, r'0.1 M S(VI)', c='gray', size=10) #, rotation=-65)
 ax.text(300, 0.03, r'5 M S(VI)', c='chocolate', size=10) #, rotation=45)
 ax.text(25, 0.2, r'0.1 M S(VI)', c='chocolate', size=10) #, rotation=70)
 

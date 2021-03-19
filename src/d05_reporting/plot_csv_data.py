@@ -47,10 +47,10 @@ def plot_csv_data(df_data, x_data_col, y_data_cols, series_labels, series_colors
         else:
             if series_labels is None:
                 ax.scatter(xs, ys, label='Observations', facecolors=series_colors[tick], edgecolor='0.25',
-                           marker=series_markers[tick], s=100, alpha=1)
+                           marker=series_markers[tick], s=50, alpha=1)
             else:
                 ax.scatter(xs, ys, label=series_labels[tick], facecolors=series_colors[tick], edgecolor='0.25',
-                           marker=series_markers[tick], s=100, alpha=1)
+                           marker=series_markers[tick], s=50, alpha=1)
 
 
 
@@ -142,7 +142,7 @@ def plot_csv_data_with_break(experiments_dict, experiment_names, x_data_col, y_d
 
     # code makes two plots (ax_left, ax_right) that share a y
     # selecting appropriate x_lims and plotting twice (for each ax) will mimic a single plot with a break in it
-    fig, (ax_left, ax_right) = plt.subplots(1, 2, sharey=True)
+    fig, (ax_left, ax_right) = plt.subplots(1, 2, figsize=(4, 3), sharey=True)
 
     if fig_title:
         fig.suptitle(fig_title)
@@ -172,12 +172,12 @@ def plot_csv_data_with_break(experiments_dict, experiment_names, x_data_col, y_d
                                                 series_labels, series_colors, series_markers, x_label=None, y_label=None,
                                                 series_title=series_title, save_fig=False, legend=False, ax=ax_right)
 
-    fig.text(0.5, -0.01, x_label, ha='center', size=20)
+    fig.text(0.5, -0.04, x_label, ha='center', size=16)
     ax_left.set_ylabel(y_label)
     ax_left.set_xlim(left_xlims[0], left_xlims[1])
     ax_right.set_xlim(right_xlims[0], right_xlims[1])
-    ax_left.legend(title=series_title, fontsize='small', edgecolor='0.25', fancybox=False, loc='center left')
-    plt.setp(ax_left.get_legend().get_title(), fontsize='14')
+    ax_left.legend(title=series_title, fontsize='10', edgecolor='0.25', fancybox=False, loc='center left')
+    plt.setp(ax_left.get_legend().get_title(), fontsize='12')
     ax_right.tick_params(axis='y', length=0)
 
     return ax_left, ax_right
