@@ -152,21 +152,26 @@ df_pred_bd10ag30 = import_treated_csv_data(expts[expt_label]['paths']['predicted
 
 cols_to_plot = ['M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER']
 title_str = ['[BD] (M)', '[PR] (M)', '[BD-PR] (M)']
+colors = ['cornflowerblue', 'coral', 'orchid']
 
-fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=(7, 2.5))
+fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=(7, 3))
 axes = [ax0, ax1, ax2]
 plt.tight_layout()
+plt.subplots_adjust(wspace=0.4, hspace=0.2)
 
 for tick in range(3):
     ax = axes[tick]
     col = cols_to_plot[tick]
 
     ax.fill_between(df_pred_bd10ag30.MINS_ELAPSED, df_pred_bd10ag30[col + '_MIN'], df_pred_bd10ag30[col + '_MAX'],
-                    color='0.8', label='95\% Confidence Interval')
+                    color=colors[tick], alpha=0.15, label='95\% Confidence Interval', linewidth=0.0)
     ax.plot(df_pred_bd10ag30.MINS_ELAPSED, df_pred_bd10ag30[col],
-                    color='0.25', label='Model Prediction')
-    ax.scatter(df_proc_bd10ag30.MINS_ELAPSED, df_proc_bd10ag30[col], color='0.25', s=30, label='Observation')
-    ax.errorbar(df_clus_bd10ag30.MINS_ELAPSED, df_clus_bd10ag30[col], color='0.25', s=30, label='Cluster')
+                    color=colors[tick], lw=3, ls='--', alpha=0.5, label='Model Prediction')
+    ax.scatter(df_proc_bd10ag30.MINS_ELAPSED, df_proc_bd10ag30[col], color=colors[tick], s=3, label='Observation',
+               alpha=1)
+    ax.errorbar(df_clus_bd10ag30.MINS_ELAPSED, df_clus_bd10ag30[col],
+                xerr=df_clus_bd10ag30.MINS_ELAPSED_std, yerr=df_clus_bd10ag30[col + '_std'], marker='.', ms=10,
+                color=colors[tick], ls='', label='Obs. (Clustered)')
 
     ax.set_xlim(-5, 95)
     ax.xaxis.set_major_locator(ticker.MultipleLocator(30))
@@ -185,7 +190,7 @@ for tick in range(3):
     ax.set_xlabel('mins')
     ax.set_title(title_str[tick])
 
-ax1.legend(fancybox=False, loc='upper center', ncol=3, bbox_to_anchor=(0.4, 1.5), fontsize=12)
+ax2.legend(fancybox=False, loc='center right', bbox_to_anchor=(2.6, 0.5), fontsize=12)
 
 fig_path = create_fig_path(expt_label)
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
@@ -304,10 +309,10 @@ ax.set_yticklabels(labels)
 ax.set_title('Butenedial branching ratio')
 ax.text(1.2, 0.8, r'\textbf{Evaporation}', c='gray', size=14)
 ax.text(10000, 0.6, r'\textbf{Reaction}', c='chocolate', size=14)
-ax.text(700, 0.87, r'5 M S(VI)', c='gray', size=10) #, rotation=-55)
-ax.text(50, 0.6, r'0.1 M S(VI)', c='gray', size=10) #, rotation=-65)
-ax.text(300, 0.03, r'5 M S(VI)', c='chocolate', size=10) #, rotation=45)
-ax.text(25, 0.2, r'0.1 M S(VI)', c='chocolate', size=10) #, rotation=70)
+ax.text(700, 0.87, r'5 M S(VI)', c='gray', size=10)
+ax.text(50, 0.6, r'0.1 M S(VI)', c='gray', size=10)
+ax.text(300, 0.03, r'5 M S(VI)', c='chocolate', size=10)
+ax.text(25, 0.2, r'0.1 M S(VI)', c='chocolate', size=10)
 
 ax.axvline(x=0.1, ymin=0, ymax=0.09, c='k', ls='--', lw=0.5)
 ax.axvline(x=10, ymin=0, ymax=0.09, c='k', ls='--', lw=0.5)

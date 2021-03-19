@@ -117,6 +117,7 @@ expts_file_name = 'bulk_droplet_experiments.yml'
 expts = load_experiments(expts_file_name)
 expt_label = 'bd10ag30_edb_ms'
 df_processed = import_treated_csv_data(expts[expt_label]['paths']['processed_data'], expt_label)
+df_clustered = import_treated_csv_data(expts[expt_label]['paths']['clustered_data'], expt_label)
 
 nmr_cols = ['M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER']
 ms_cols = ['MZ85_MZ283', 'MZ84_MZ283', 'MZ150_MZ283']
@@ -129,7 +130,12 @@ for tick in range(3):
     df_processed[nmr_cols[tick]] = df_processed[ms_cols[tick]] * cfs[tick] * M_PEG6_PARTICLE
     df_processed[nmr_cols[tick] + '_std'] = df_processed[ms_cols[tick]] * cf_ses[tick] * M_PEG6_PARTICLE
 
+    df_clustered[nmr_cols[tick]] = df_clustered[ms_cols[tick]] * cfs[tick] * M_PEG6_PARTICLE
+    df_clustered[nmr_cols[tick] + '_std'] = df_clustered[nmr_cols[tick]] * df_clustered[ms_cols[tick] + '_std'] / \
+                                            df_clustered[ms_cols[tick]]
+
 save_data_frame(df_to_save=df_processed, experiment_label=expt_label, level_of_treatment='PROCESSED')
+save_data_frame(df_to_save=df_clustered, experiment_label=expt_label, level_of_treatment='CLUSTERED')
 
 # make the modeled data: take the best fit ph=6.9 (see 20200118_predicting_butenedial_nh3g_droplets.ipynb)
 t_max = df_processed.MINS_ELAPSED.max()
