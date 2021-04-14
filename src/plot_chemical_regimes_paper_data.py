@@ -331,7 +331,7 @@ ax0.add_patch(rect)
 
 ax0.legend(loc='upper center', ncol=2, bbox_to_anchor=(1, 1.15), fontsize=12, frameon=False)
 
-ax2.text(6.8, -1, 'Shift (ppm)', fontsize=16)
+ax2.text(6.8, -1, 'Chemical Shift (ppm)', fontsize=16)
 ax0.set_ylabel('Intensity', fontsize=16)
 #
 # add the relevant labels for species
@@ -408,7 +408,7 @@ for tick in range(3):
         ax0.add_patch(rect)
 
 ax0.legend(loc='upper center', ncol=2, bbox_to_anchor=(0.5, 1.3), fontsize=12, frameon=False)
-ax1.text(6, -15, 'Shift (ppm)', fontsize=16)
+ax1.text(6, -15, 'Chemical Shift (ppm)', fontsize=16)
 ax0.set_ylabel('Intensity', fontsize=16)
 ax1.set_ylabel('Intensity', fontsize=16)
 
@@ -470,38 +470,59 @@ df_0 = scale_nmr(df_0, 'SIG', dmso_sig_0)
 df_1 = scale_nmr(df_1, 'SIG', dmso_sig_1)
 df_2 = scale_nmr(df_2, 'SIG', dmso_sig_2)
 
-fig, ax = plt.subplots()
+fig = plt.figure(figsize=(10, 5))
+plt.tight_layout()
+gs = GridSpec(2, 4)
+gs.update(hspace=0.3)
+gs.update(wspace=0.5)
+ax0 = plt.subplot(gs[0:2, 0:2])
+ax1 = plt.subplot(gs[0, 2:4])
+ax2 = plt.subplot(gs[1, 2:4])
 
-xranges = [8.1, 1.1]
-xlims_for_ymax = [5, 6.5]
+axes = [ax0, ax1, ax2]
 
-ax.plot(df_0.PPM, df_0.SIG, lw=2, color='blue', alpha=0.5, label='5 min reacted')
-ax.plot(df_1.PPM, df_1.SIG, lw=2, color='red', alpha=0.5, label='25 min reacted')
-ax.plot(df_2.PPM, df_2.SIG, lw=2, color='brown', alpha=0.5, label='2 hr reacted')
+xranges = [[8.1, 0.1], [4.6, 3.6], [6.3, 5.3]]
+xlims_for_ymax = [[5, 6.5], [4.6, 3.6], [5.5, 5]]
 
-ymax = choose_ymax_nmr_subplot(df_0, 'PPM', xlims_for_ymax)
+for tick in range(3):
+    ax = axes[tick]
 
-ax.set_xlim(xranges[0], xranges[1])
-ax.set_ylim(bottom=ymax * -0.02, top=ymax)
+    ax.plot(df_0.PPM, df_0.SIG, lw=2, color='blue', alpha=0.5, label='5 min reacted')
+    ax.plot(df_1.PPM, df_1.SIG, lw=2, color='red', alpha=0.5, label='25 min reacted')
+    ax.plot(df_2.PPM, df_2.SIG, lw=2, color='brown', alpha=0.5, label='2 hr reacted')
 
-ax.legend(loc='upper center', ncol=3, bbox_to_anchor=(0.5, 1.1), fontsize=12, frameon=False)
-ax.set_xlabel('Chemical Shift (ppm)')
-ax.set_ylabel('Intensity')
+    ymax = choose_ymax_nmr_subplot(df_0, 'PPM', xlims_for_ymax[tick])
+
+    ax.set_xlim(xranges[tick][0], xranges[tick][1])
+    ax.set_ylim(bottom=ymax * -0.02, top=ymax)
+
+    if tick > 0:
+        rect = patches.Rectangle((xranges[tick][0], -0.02),
+                                  xranges[tick][1] - xranges[tick][0], ymax*1.2,
+                                  linewidth=1, edgecolor='0.25', facecolor='0.8', alpha=0.2)
+        ax0.add_patch(rect)
+
+
+ax0.legend(loc='upper center', ncol=3, bbox_to_anchor=(1.1, 1.1), fontsize=12, frameon=False)
+ax0.set_ylabel('Intensity')
 
 # add the relevant labels for species
 # butenedial:
-ax.text(6.05, 10, r'\textbf{BD, a}', fontsize=10)
-ax.plot([6, 6], [6, 9], lw=1, color='0.25')
-ax.text(6.8, 30, r'\textbf{BD, b}', fontsize=10)
+ax0.text(6.05, 10, r'\textbf{BD, a}', fontsize=10)
+ax0.plot([6, 6], [6, 9], lw=1, color='0.25')
+ax0.text(7.1, 30, r'\textbf{BD, b}', fontsize=10)
 
 # products:
-ax.text(5.75, 4, 'accretion\nproducts', fontsize=10)
+# ax0.text(5.75, 4, 'accretion\nproducts', fontsize=10)
 
 # add in the leftover molecules
-ax.text(5.4, 40, 'HDO', fontsize=10)
-ax.text(3.05, 40, 'DMS', fontsize=10)
-ax.text(2.1, 15, 'HAc', fontsize=10)
-ax.text(3.65, 18, 'MeOH', fontsize=10)
+ax0.text(5.6, 40, 'HDO', fontsize=10)
+ax0.text(3.05, 40, 'DMS', fontsize=10)
+ax0.text(2.15, 15, 'HAc', fontsize=10)
+ax0.text(4.2, 18, 'MeOH', fontsize=10)
+
+ax2.text(6.7, -1.3, 'Chemical Shift (ppm)', fontsize=16)
+ax0.set_ylabel('Intensity', fontsize=16)
 
 fig_path = create_fig_path('bdoh_nmr_spectrum')
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=True)

@@ -42,7 +42,7 @@ ax_left, ax_right = plot_csv_data_with_break(experiments_dict=expts, experiment_
                                              series_markers=[['o'], ['o']],
                                              x_label='hours', y_label=None,
                                              left_xlims=[-50, 350], right_xlims=[750, 1150],
-                                             fig_title=r'PR (n.s.)', series_title='Reaction Medium')
+                                             fig_title=r'PR (sig.)', series_title='Reaction Medium')
 
 positions = (0, 240)
 ax_left.set_xticks(positions)
@@ -126,9 +126,9 @@ for tick in range(len(ppms_ammonia)):
         title_str = '{0:.0f} ppm NH$_3$'.format(ppm_ammonia)
     ax[0, tick].set_title(title_str, fontsize=14)
 
-ax[0, 0].text(-40, 0.02, 'BD\n(n.s.)', multialignment='center', horizontalalignment='left',
+ax[0, 0].text(-40, 0.02, 'BD\n(sig.)', multialignment='center', horizontalalignment='left',
               verticalalignment='center', fontsize=14)
-ax[1, 0].text(-40, 0.05, 'PR\n(n.s.)', multialignment='center', horizontalalignment='left',
+ax[1, 0].text(-40, 0.05, 'PR\n(sig.)', multialignment='center', horizontalalignment='left',
               verticalalignment='center', fontsize=14)
 
 fig_path = create_fig_path('bdag_reaction')
@@ -164,14 +164,15 @@ for tick in range(3):
     col = cols_to_plot[tick]
 
     ax.fill_between(df_pred_bd10ag30.MINS_ELAPSED, df_pred_bd10ag30[col + '_MIN'], df_pred_bd10ag30[col + '_MAX'],
-                    color=colors[tick], alpha=0.15, label='95\% Confidence Interval', linewidth=0.0)
+                    color=colors[tick], alpha=0.3, label='95\% Confidence Interval', linewidth=0, zorder=0)
     ax.plot(df_pred_bd10ag30.MINS_ELAPSED, df_pred_bd10ag30[col],
-                    color=colors[tick], lw=3, ls='--', alpha=0.5, label='Model Prediction')
-    ax.scatter(df_proc_bd10ag30.MINS_ELAPSED, df_proc_bd10ag30[col], color=colors[tick], s=3, label='Observation',
+                    color=colors[tick], lw=3, label='Model Prediction', zorder=1)
+    ax.scatter(df_proc_bd10ag30.MINS_ELAPSED, df_proc_bd10ag30[col], color='0.25', s=3, label='Observation',
                alpha=1)
     ax.errorbar(df_clus_bd10ag30.MINS_ELAPSED, df_clus_bd10ag30[col],
-                xerr=df_clus_bd10ag30.MINS_ELAPSED_std, yerr=df_clus_bd10ag30[col + '_std'], marker='.', ms=10,
-                color=colors[tick], ls='', label='Obs. (Clustered)')
+                xerr=df_clus_bd10ag30.MINS_ELAPSED_std, yerr=df_clus_bd10ag30[col + '_std'], marker='.', ms=15,
+                color=colors[tick], ls='', label='Obs. (Clustered)',
+                markeredgecolor='0.25', mew=2,  ecolor='0.25')
 
     ax.set_xlim(-5, 95)
     ax.xaxis.set_major_locator(ticker.MultipleLocator(30))
