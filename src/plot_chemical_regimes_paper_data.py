@@ -527,9 +527,92 @@ ax0.set_ylabel('Intensity', fontsize=16)
 fig_path = create_fig_path('bdoh_nmr_spectrum')
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=True)
 
-# 6: plots of the mass spec data
+# comparative plot of bd/nhx and bd/oh
+fns = ['20200724_bd_as_nmr.csv', '20210126_bdohph11_5min.csv']
+d = get_project_directory()
+path = os.path.join(d, 'data_raw', 'nmrs', fns[0])
+df_0 = pd.read_csv(path, sep='\t', header=None, names=['PPM', 'SIG', 'x'])
+df_0.drop(columns=['x'], inplace=True)
 
-# 5: plot mass spec of droplet
+path = os.path.join(d, 'data_raw', 'nmrs', fns[1])
+df_1 = pd.read_csv(path, sep='\t', header=None, names=['PPM', 'SIG', 'x'])
+df_1.drop(columns=['x'], inplace=True)
+
+dmso_sig_0 = df_0.loc[(df_0.PPM > 3) & (df_0.PPM < 3.2)].SIG.max()
+dmso_sig_1 = df_1.loc[(df_1.PPM > 3) & (df_1.PPM < 3.2)].SIG.max()
+df_0 = scale_nmr(df_0, 'SIG', dmso_sig_0)
+df_1 = scale_nmr(df_1, 'SIG', dmso_sig_1)
+
+fig = plt.figure(figsize=(10, 5))
+plt.tight_layout()
+gs = GridSpec(2, 4)
+gs.update(hspace=0.5)
+gs.update(wspace=0.5)
+ax0 = plt.subplot(gs[0, :], )
+ax1 = plt.subplot(gs[1, 0:3])
+ax2 = plt.subplot(gs[1, 3:4])
+axes = [ax0, ax1, ax2]
+
+xranges = [[8.1, 1.1], [7, 5], [3.5, 3.25]]
+xlims_for_ymax = [[3, 3.2], [3.2, 4.2], [5.5, 6]]
+
+for tick in range(3):
+    ax = axes[tick]
+    ax.plot(df_0.PPM, df_0.SIG, lw=2, color='blue', alpha=0.5, label='10 min reacted')
+    ax.plot(df_1.PPM, df_1.SIG, lw=2, color='red', alpha=0.5, label='120 min reacted')
+
+    ymax = choose_ymax_nmr_subplot(df_0, 'PPM', xlims_for_ymax[tick])
+
+    ax.set_xlim(xranges[tick][0], xranges[tick][1])
+    ax.set_ylim(bottom=ymax * -0.02, top=ymax)
+
+    if tick > 0:
+        rect = patches.Rectangle((min(xranges[tick]), ymax * -0.02),
+                                 max(xranges[tick]) - min(xranges[tick]), ymax,
+                                 linewidth=1, edgecolor='0.25', facecolor='0.8', alpha=0.2)
+        ax0.add_patch(rect)
+
+ax0.legend(loc='upper center', ncol=2, bbox_to_anchor=(0.5, 1.3), fontsize=12, frameon=False)
+ax1.text(6, -15, 'Chemical Shift (ppm)', fontsize=16)
+ax0.set_ylabel('Intensity', fontsize=16)
+ax1.set_ylabel('Intensity', fontsize=16)
+
+# add the relevant labels for species
+# butenedial:
+ax0.text(5.9, 60, r'\textbf{BD}', fontsize=10)
+ax0.text(6.2, 90, r'\textbf{BD}', fontsize=10)
+
+# pyrrolinone:
+ax1.text(6.7, 7, r'\textbf{PR, h}', fontsize=10)
+ax1.text(5.8, 20, 'PR, g', fontsize=10)
+ax1.plot([5.9, 5.8], [8, 19], lw=1, color='0.25')
+ax2.text(3.38, 25, 'PR,\nf', fontsize=10)
+ax2.vlines(3.37, 16, 23, lw=1, color='0.25')
+
+# butenedial-pyrrolinone dimer:
+ax1.text(5.67, 14, r'\textbf{BD-PR,}', fontsize=10)
+ax1.text(5.67, 11, r'\textbf{j}', fontsize=10)
+ax1.text(5.45, 9, 'k', fontsize=10)
+ax1.text(6.1, 18, 'BD-PR,', fontsize=10)
+ax1.text(6., 15, 'n', fontsize=10)
+ax1.text(6.08, 12, 'm', fontsize=10)
+ax1.text(6.45, 15, 'BD-PR,\nl', fontsize=10)
+ax1.vlines(6.3, 6, 16, lw=1, color='0.25')
+ax1.vlines(6.05, 5, 11, lw=1, color='0.25')
+ax1.vlines(5.97, 6, 14, lw=1, color='0.25')
+ax2.text(3.49, 16, 'BD-PR,\ni', fontsize=10)
+
+# add in the leftover molecules
+ax0.text(5.15, 100, 'HDO', fontsize=10)
+ax0.text(3.42, 100, 'DMS', fontsize=10)
+ax0.text(2.1, 45, 'HAc', fontsize=10)
+ax0.text(1.5, 15, 'MPA', fontsize=10)
+ax2.text(3.38, 48, 'MeOH', fontsize=10)
+
+fig_path = create_fig_path('bdnhx_bdoh_nmr_spectrum')
+plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=True)
+
+# 6: plots of the mass spec data
 
 # load the data
 project_dir = get_project_directory()
