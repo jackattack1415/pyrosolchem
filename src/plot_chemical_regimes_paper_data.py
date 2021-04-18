@@ -884,3 +884,77 @@ plt.axvline(x_as, 0, len(phs), c='white', ls='--', lw=1)
 
 fig_path = create_fig_path('chemical_regimes_summary')
 plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
+
+
+# 9: comparison of nmr and ms
+
+expt_label_nmr = 'bdnhph5_nmr'
+df_nmr_processed = import_treated_csv_data(expts[expt_label_nmr]['paths']['processed_data'], expt_label_nmr)
+df_nmr_modeled = import_treated_csv_data(expts[expt_label_nmr]['paths']['modeled_data'], expt_label_nmr)
+
+expt_label_ms = 'bdnhph5_ms'
+df_ms_processed = import_treated_csv_data(expts[expt_label_ms]['paths']['processed_data'], expt_label_ms)
+df_ms_clustered = import_treated_csv_data(expts[expt_label_ms]['paths']['clustered_data'], expt_label_ms)
+
+
+fig, (ax0, ax1, ax2) = plt.subplots(1, 3, figsize=(7, 2.5))
+axes = [ax0, ax1, ax2]
+plt.tight_layout()
+
+nmr_param_strs = ['M_BUTENEDIAL', 'M_C4H5NO', 'M_DIMER']
+ms_param_strs = ['MZ85_MZ283', 'MZ84_MZ283', 'MZ150_MZ283']
+scaling = [1.85, 1.85, 1.8]
+titles = ['BD', 'PR', 'BD-PR']
+colors = ['cornflowerblue', 'coral', 'orchid']
+
+for tick in range(3):
+    ax = axes[tick]
+    nmr_param = nmr_param_strs[tick]
+    ms_param = ms_param_strs[tick]
+
+    l1 = ax.scatter(df_nmr_processed['MINS_ELAPSED'], df_nmr_processed[nmr_param], color='0.25', s=30, label='NMR',
+               zorder=5)
+    l2 = ax.plot(df_nmr_modeled['MINS_ELAPSED'], df_nmr_modeled[nmr_param], color='0.25', lw=2, label='Model', zorder=4)
+    l3 = ax.fill_between(df_nmr_modeled['MINS_ELAPSED'], df_nmr_modeled[nmr_param + '_MIN'],
+                    df_nmr_modeled[nmr_param + '_MAX'], color='0.25', label='Model (95\% CI)',
+                    alpha=0.3, linewidth=0, zorder=3)
+    at = ax.twinx()
+    l4 = at.scatter(df_ms_processed['MINS_ELAPSED'], df_ms_processed[ms_param], color=colors[tick], s=3, label='MS',
+                    zorder=1)
+    l5 = at.errorbar(df_ms_clustered['MINS_ELAPSED'], df_ms_clustered[ms_param], xerr=df_ms_clustered['MINS_ELAPSED_std'],
+                yerr= df_ms_clustered[ms_param + '_std'], marker='o', ms=7, ls='', c='1',
+                markeredgecolor=colors[tick], mew=2, ecolor=colors[tick],
+                label=r'MS ($\pm$ 1$\sigma$)', zorder=0)
+
+    ax.set_title(titles[tick])
+
+    # formatting
+    ymax_nmr = df_nmr_processed[nmr_param].max()
+    ymax_ms = df_ms_clustered[ms_param].max()
+
+    ax.set_ylim(ymin=0, ymax=ymax_nmr*scaling[tick])  # increase ymax of all other plots
+    at.set_ylim(ymin=0, ymax=ymax_ms*2)  # increase ymax of all other plots
+
+    ax.set_yticks([])
+    at.set_yticks([])
+
+    ax.set_xlabel('mins')  # add xlabel only for the bottom plots
+
+    ax.set_xlim(xmin=0, xmax=100)
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(base=50))
+    ax.set_xticklabels(ax.get_xticks())
+    labels = [str(round(float(item.get_text()))) for item in ax.get_xticklabels()]
+    ax.set_xticklabels(labels)
+
+    # ls = l1 + l2 + l3 + l4 + l5
+    # labs = [l.get_label() for l in ls]
+
+    if ax == ax1:
+        ax.legend(frameon=False, loc='upper center', ncol=3, bbox_to_anchor=(0.6, 1.6), fontsize=12)
+        at.legend(frameon=False, loc='upper center', ncol=3, bbox_to_anchor=(0.6, 1.45), fontsize=12)
+
+
+# ax1.legend(fancybox=False, loc='upper center', ncol=3, bbox_to_anchor=(1.25, 1.5), fontsize=12)
+
+fig_path = create_fig_path('ms_nmr_comparison')  # save path
+plt.savefig(fig_path, bbox_inches='tight', dpi=300, transparent=False)
